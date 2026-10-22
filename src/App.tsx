@@ -1,8 +1,10 @@
-import React from 'react'
+import InventoryPage from './pages/InventoryPage'
 
 const App = () => {
   return (
-    <div>App</div>
+    <div>
+      <InventoryPage></InventoryPage>
+    </div>
   )
 }
 
