@@ -3,36 +3,39 @@ import { getProduct, getProducts } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 
 export function useGetProducts() {
-    const productsQuery = useQuery({
-        queryKey: ["getProducts"],
-        queryFn: getProducts,
-    });
+	const productsQuery = useQuery({
+		queryKey: ["products"],
+		queryFn: getProducts,
+	});
 
-    return {
-        ...productsQuery,
-    };
+	return {
+		products: productsQuery.data,
+		...productsQuery,
+	};
 }
 
 export function useGetProduct({ id }: { id: string }) {
-    return useQuery({
-        queryKey: ["products", id],
-        queryFn: () => getProduct({ id }),
-    });
+	const productQuery = useQuery({
+		queryKey: ["products", id],
+		queryFn: () => getProduct({ id }),
+	});
+
+	return { product: productQuery.data, ...productQuery };
 }
 
 export function useDeleteProduct() {
-    const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-    const deleteMutation = useMutation({
-        mutationFn: deleteProduct,
-        onSuccess: () => {
-            // This will now successfully trigger useProducts to refetch
-            queryClient.invalidateQueries({ queryKey: ["products"] });
-        },
-    });
+	const deleteMutation = useMutation({
+		mutationFn: deleteProduct,
+		onSuccess: () => {
+			// Triggers useProducts to refetch
+			queryClient.invalidateQueries({ queryKey: ["products"] });
+		},
+	});
 
-    return {
-        deleteProduct: deleteMutation.mutate,
-        isDeleting: deleteMutation.isPending,
-    };
+	return {
+		deleteProduct: deleteMutation.mutate,
+		isDeleting: deleteMutation.isPending,
+	};
 }

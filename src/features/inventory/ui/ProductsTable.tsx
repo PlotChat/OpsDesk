@@ -2,11 +2,13 @@ import { Button } from "@/components/ui/button";
 import { type Column } from "@/components/ui/feature-tables/data-table";
 import FeatureTable from "@/components/ui/feature-tables/feature-table";
 import { toast } from "@/components/ui/toast";
-import ProductItemAlertDialog from "@/features/inventory/ui/ProductItemAlertDialog";
 import { IoMdAdd } from "react-icons/io";
 import { TbFileExport } from "react-icons/tb";
 import type { Product } from "../api/getProducts";
-import useProducts from "../hooks/useGetProducts";
+import { useDeleteProduct, useGetProducts } from "../hooks/useProducts";
+import { useState } from "react";
+
+import GetProductItemDialog from "./GetProductItemDialog";
 
 const productColumns = [
 	{ key: "id", label: "Id" },
@@ -15,13 +17,18 @@ const productColumns = [
 	{ key: "price", label: "Price" },
 ] satisfies Column<Product>[];
 
-const ProductTableActions = ({ productId }: { productId: string }) => {
-	const { deleteProduct, isDeleting } = useProducts();
-	const { data, isPending, isError, error } = useProducts();
+const ProductTableActions = ({
+	productId,
+	onView,
+}: {
+	productId: string;
+	onView: () => void;
+}) => {
+	const { deleteProduct, isDeleting } = useDeleteProduct();
 
 	return (
 		<div className="flex gap-1 justify-center">
-			<ProductItemAlertDialog item={product}></ProductItemAlertDialog>
+			<Button onClick={onView}>View</Button>
 			<Button variant="secondary">Edit</Button>
 			<Button
 				variant="destructive"
@@ -34,7 +41,7 @@ const ProductTableActions = ({ productId }: { productId: string }) => {
 				}}
 				disabled={isDeleting}
 			>
-				Delete
+				{isDeleting ? "..." : "Delete"}
 			</Button>
 		</div>
 	);
@@ -45,41 +52,54 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 		<>
 			<Button>
 				<span className="hidden md:block">Export {title.toLowerCase()}</span>
-				<TbFileExport></TbFileExport>
+				<TbFileExport />
 			</Button>
 			<Button>
 				<span className="hidden md:block">Add new item</span>
-				<IoMdAdd></IoMdAdd>
+				<IoMdAdd />
 			</Button>
 		</>
 	);
 };
 
 export const ProductsTable = () => {
-	const { data, isPending, isError, error } = useProducts();
-
-	if (isPending) {
-		return <div>Loading...</div>;
-	}
-	if (isError) {
-		return <div>Error: {error.message}</div>;
-	}
+	const { data: products, isPending, isError, error } = useGetProducts();
+	
+	// When a product id is selected through actions in the table, a modal will appear.
+	// To close the modal we make this null (according to conditionals below)
+	const [currProductId, setCurrProductId] = useState<string | null>(null);
+	
+	if (isPending) return <div>Loading...</div>;
+	if (isError) return <div>Error: {error.message}</div>;
 
 	return (
 		<>
 			<FeatureTable
 				title="Products"
-				data={data}
+				data={products}
 				columns={productColumns}
 				className="mt-5"
 				renderFeatureActions={(row: Product) => (
-					<ProductTableActions productId={row.id} />
+					<ProductTableActions
+						productId={row.id}
+						onView={() => setCurrProductId(row.id)}
+					/>
 				)}
-				renderHeaderActions={() => {
-					<ProductHeaderActions title="Products" />;
-				}}
-			></FeatureTable>
+				renderHeaderActions={() => <ProductHeaderActions title="Products" />}
+			/>
+
+			{currProductId && (
+				<GetProductItemDialog
+					productId={currProductId}
+					title={`Product - ${currProductId}`}
+					open={true}
+					onOpenChange={(isOpen) => {
+						if (!isOpen) setCurrProductId(null);
+					}}
+				></GetProductItemDialog>
+			)}
 		</>
 	);
 };
+
 export default ProductsTable;

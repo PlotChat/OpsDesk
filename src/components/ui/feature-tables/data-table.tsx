@@ -28,44 +28,50 @@ export function DataTable<T>({
 	renderFeatureActions,
 }: DataTableProps<T>) {
 	return (
-		<Table className={className}>
-			<TableHeader>
-				<TableRow>
-					{columns.map((col) => (
-						<TableHead
-							key={String(col.key)}
-							className={col.align === "right" ? "text-right" : ""}
-						>
-							{col.label}
-						</TableHead>
-					))}
-					{renderFeatureActions && (
-						<TableCell className="text-center">Action</TableCell>
-					)}
-				</TableRow>
-			</TableHeader>
-
-			<TableBody>
-				{data.map((row, rowIndex) => (
-					<TableRow key={rowIndex}>
-						{columns.map((col) => (
-							<>
-								<TableCell
+		<>
+			{data.length > 0 ? (
+				<Table className={className}>
+					<TableHeader>
+						<TableRow>
+							{columns.map((col) => (
+								<TableHead
 									key={String(col.key)}
 									className={col.align === "right" ? "text-right" : ""}
 								>
-									{String(row[col.key])}
-								</TableCell>
-							</>
+									{col.label}
+								</TableHead>
+							))}
+							{renderFeatureActions && (
+								<TableCell className="text-center">Action</TableCell>
+							)}
+						</TableRow>
+					</TableHeader>
+
+					<TableBody>
+						{data.map((row, rowIndex) => (
+							<TableRow key={rowIndex}>
+								{columns.map((col) => (
+									<>
+										<TableCell
+											key={String(col.key)}
+											className={col.align === "right" ? "text-right" : ""}
+										>
+											{String(row[col.key])}
+										</TableCell>
+									</>
+								))}
+								{renderFeatureActions && (
+									<TableCell className="text-center">
+										{renderFeatureActions(row)}
+									</TableCell>
+								)}
+							</TableRow>
 						))}
-						{renderFeatureActions && (
-							<TableCell className="text-center">
-								{renderFeatureActions(row)}
-							</TableCell>
-						)}
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+					</TableBody>
+				</Table>
+			) : (
+				<div>Empty data!</div>
+			)}
+		</>
 	);
 }
