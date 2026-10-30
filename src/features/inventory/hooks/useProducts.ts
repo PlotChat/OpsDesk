@@ -6,14 +6,20 @@ import {
 } from "@tanstack/react-query";
 import { getProduct, getProductsPage } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
+import { createProduct } from "../api/createProduct";
 
-export function useGetProductsPage({ page, pageSize }: { page: number; pageSize: number }) {
-	
+export function useGetProductsPage({
+	page,
+	pageSize,
+}: {
+	page: number;
+	pageSize: number;
+}) {
 	const productsQuery = useQuery({
 		queryKey: ["productsPage", page, pageSize],
 		queryFn: async () => {
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			return getProductsPage({ pageSize, page })
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			return getProductsPage({ pageSize, page });
 		},
 		placeholderData: keepPreviousData,
 	});
@@ -21,7 +27,7 @@ export function useGetProductsPage({ page, pageSize }: { page: number; pageSize:
 	return {
 		products: productsQuery.data?.data || [],
 		totalPages: productsQuery.data?.totalPages || 1,
-		...productsQuery,	
+		...productsQuery,
 	};
 }
 
@@ -48,4 +54,17 @@ export function useDeleteProduct() {
 		deleteProduct: deleteMutation.mutate,
 		isDeleting: deleteMutation.isPending,
 	};
+}
+
+export function useCreateProduct() {
+	const queryClient = useQueryClient();
+
+	const createMutation = useMutation({
+		mutationFn: createProduct,
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["productsPage"] });
+		}
+	});
+
+	return createMutation;
 }

@@ -12,7 +12,7 @@ type GetProductItemDialogProps = {
     onOpenChange?: (isOpen: boolean) => void;
     title: string;
     open?: boolean;
-    viewMode?: "edit" | "view";
+    viewMode?: "edit" | "view"; // (IDEA) In case we need it in the future
 };
 
 export default function GetProductItemDialog({
@@ -20,8 +20,8 @@ export default function GetProductItemDialog({
     title,
     onOpenChange = () => {},
     open,
-    // viewMode = "view" FOR LATER USE,
 }: GetProductItemDialogProps) {
+    // This query is placed here instead of in the parent component for optimization, to reduce alot of fetching on render
     const { data: product, isPending, isError, error } = useGetProduct({ id: productId });
 
     return (
