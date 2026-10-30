@@ -1,16 +1,27 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, getProducts } from "../api/getProducts";
+import {
+	keepPreviousData,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
+import { getProduct, getProductsPage } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 
-export function useGetProducts() {
+export function useGetProductsPage({ page, pageSize }: { page: number; pageSize: number }) {
+	
 	const productsQuery = useQuery({
-		queryKey: ["products"],
-		queryFn: getProducts,
+		queryKey: ["productsPage", page, pageSize],
+		queryFn: async () => {
+			await new Promise(resolve => setTimeout(resolve, 1000));
+			return getProductsPage({ pageSize, page })
+		},
+		placeholderData: keepPreviousData,
 	});
 
 	return {
-		products: productsQuery.data,
-		...productsQuery,
+		products: productsQuery.data?.data || [],
+		totalPages: productsQuery.data?.totalPages || 1,
+		...productsQuery,	
 	};
 }
 
@@ -29,8 +40,7 @@ export function useDeleteProduct() {
 	const deleteMutation = useMutation({
 		mutationFn: deleteProduct,
 		onSuccess: () => {
-			// Triggers useProducts to refetch
-			queryClient.invalidateQueries({ queryKey: ["products"] });
+			queryClient.invalidateQueries({ queryKey: ["productsPage"] });
 		},
 	});
 

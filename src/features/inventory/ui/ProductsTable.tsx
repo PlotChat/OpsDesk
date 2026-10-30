@@ -5,10 +5,10 @@ import { toast } from "@/components/ui/toast";
 import { IoMdAdd } from "react-icons/io";
 import { TbFileExport } from "react-icons/tb";
 import type { Product } from "../api/getProducts";
-import { useDeleteProduct, useGetProducts } from "../hooks/useProducts";
+import { useDeleteProduct, useGetProductsPage } from "../hooks/useProducts";
 import { useState } from "react";
-
 import GetProductItemDialog from "./GetProductItemDialog";
+import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
 
 const productColumns = [
 	{ key: "id", label: "Id" },
@@ -63,31 +63,48 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 };
 
 export const ProductsTable = () => {
-	const { data: products, isPending, isError, error } = useGetProducts();
-	
+	const pageSize = 10;
+	const [currentPage, setCurrentPage] = useState(1);
+	const { products, totalPages, isPlaceholderData, isPending, isError, error } =
+		useGetProductsPage({ page: currentPage, pageSize });
+
 	// When a product id is selected through actions in the table, a modal will appear.
 	// To close the modal we make this null (according to conditionals below)
 	const [currProductId, setCurrProductId] = useState<string | null>(null);
-	
+
 	if (isPending) return <div>Loading...</div>;
 	if (isError) return <div>Error: {error.message}</div>;
 
 	return (
-		<>
-			<FeatureTable
-				title="Products"
-				data={products}
-				columns={productColumns}
-				className="mt-5"
-				renderFeatureActions={(row: Product) => (
-					<ProductTableActions
-						productId={row.id}
-						onView={() => setCurrProductId(row.id)}
-					/>
-				)}
-				renderHeaderActions={() => <ProductHeaderActions title="Products" />}
-			/>
+		<div className="mb-10 rounded-2xl w-full">
+			<div className="h-150 mx-auto flex justify-center items-start">
+				{/* The products table */}
+				<FeatureTable
+					title="Products"
+					data={products || []}
+					columns={productColumns}
+					defaultTotalRows={pageSize}
+					isLoading={isPlaceholderData}
+					rowKey={"id"}
+					renderFeatureActions={(row: Product) => (
+						<ProductTableActions
+							productId={row.id}
+							onView={() => setCurrProductId(row.id)}
+						/>
+					)}
+					renderHeaderActions={() => <ProductHeaderActions title="Products" />}
+				/>
+			</div>
 
+			{/* Pagination navigation */}
+
+			<FeatureTablePagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				onPageChange={setCurrentPage}
+			></FeatureTablePagination>
+
+			{/* Modal popup for when viewing a specific product */}
 			{currProductId && (
 				<GetProductItemDialog
 					productId={currProductId}
@@ -98,7 +115,7 @@ export const ProductsTable = () => {
 					}}
 				></GetProductItemDialog>
 			)}
-		</>
+		</div>
 	);
 };
 

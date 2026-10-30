@@ -20,7 +20,7 @@ export default function GetProductItemDialog({
     title,
     onOpenChange = () => {},
     open,
-    viewMode = "view",
+    // viewMode = "view" FOR LATER USE,
 }: GetProductItemDialogProps) {
     const { data: product, isPending, isError, error } = useGetProduct({ id: productId });
 
