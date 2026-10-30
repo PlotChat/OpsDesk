@@ -1,15 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import type { PostgrestError } from "@supabase/supabase-js";
-
-export interface Product {
-	id: string;
-	sku: string;
-	name: string;
-	category: string;
-	price: number;
-	stock_level: number;
-	created_at: string;
-}
+import type { Product } from "../types/types";
 
 export interface ProductPagesResponse {
 	data: Product[];
