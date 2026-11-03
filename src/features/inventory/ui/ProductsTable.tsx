@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { type Column } from "@/components/ui/feature-tables/data-table";
+import { type DataTableColumn } from "@/components/ui/feature-tables/data-table";
 import FeatureTable from "@/components/ui/feature-tables/feature-table";
 import { toast } from "@/components/ui/toast";
 import { IoMdAdd } from "react-icons/io";
@@ -10,7 +10,6 @@ import { useState } from "react";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
 import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
 import CreateProductDialog from "./CreateProductDialog";
-
 import { TbReload } from "react-icons/tb";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -99,7 +98,7 @@ export const ProductsTable = () => {
 		{ key: "name", label: "Name", width: "xl", truncate: true },
 		{ key: "price", label: "Price"},
 		{ key: "created_at", label: "Created at" },
-	] satisfies Column<Product>[];
+	] satisfies DataTableColumn<Product>[];
 
 	return (
 		<div className="mb-10 rounded-2xl w-full">

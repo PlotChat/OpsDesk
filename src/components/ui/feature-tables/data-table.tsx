@@ -9,7 +9,7 @@ import {
 } from "./table";
 import { CgSpinnerAlt } from "react-icons/cg";
 
-export interface Column<T> {
+export interface DataTableColumn<T> {
     truncate?: boolean;
     key: keyof T;
     label: string;
@@ -19,7 +19,7 @@ export interface Column<T> {
 
 export interface DataTableProps<T> {
     data: T[];
-    columns: Column<T>[];
+    columns: DataTableColumn<T>[];
     rowKey: keyof T | ((row: T) => string | number);
     defaultTotalRows: number;
     footerTotal?: string;
@@ -29,7 +29,7 @@ export interface DataTableProps<T> {
     renderFeatureActions?: (row: T) => React.ReactNode;
 }
 
-function getCellStyles<T>(col: Column<T>, isHeader = false) {
+function getCellStyles<T>(col: DataTableColumn<T>, isHeader = false) {
     return cn(
         { "text-right": col.align === "right" },
         {

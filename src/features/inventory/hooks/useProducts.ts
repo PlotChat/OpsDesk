@@ -1,11 +1,11 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, getProductsPage } from "../api/getProducts";
+import { getProduct, getProductsPage, type ProductPagesProps } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 import { createProduct } from "../api/createProduct";
 import { editProduct } from "../api/editProduct";
 import type { Product } from "../types/types";
 
-export function useGetProductsPage({ page, pageSize }: { page: number; pageSize: number }) {
+export function useGetProductsPage({ page, pageSize }: ProductPagesProps) {
 	const productsQuery = useQuery({
 		queryKey: ["productsPage", page, pageSize],
 		queryFn: async () => {
