@@ -1,27 +1,19 @@
-import {
-	keepPreviousData,
-	useMutation,
-	useQuery,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProduct, getProductsPage } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 import { createProduct } from "../api/createProduct";
+import { editProduct } from "../api/editProduct";
+import type { Product } from "../types/types";
 
-export function useGetProductsPage({
-	page,
-	pageSize,
-}: {
-	page: number;
-	pageSize: number;
-}) {
+export function useGetProductsPage({ page, pageSize }: { page: number; pageSize: number }) {
 	const productsQuery = useQuery({
 		queryKey: ["productsPage", page, pageSize],
 		queryFn: async () => {
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			return getProductsPage({ pageSize, page });
 		},
 		placeholderData: keepPreviousData,
+		refetchOnWindowFocus: false,
 	});
 
 	return {
@@ -33,8 +25,11 @@ export function useGetProductsPage({
 
 export function useGetProduct({ id }: { id: string }) {
 	const productQuery = useQuery({
-		queryKey: ["products", id],
-		queryFn: () => getProduct({ id }),
+		queryKey: ["product", id],
+		queryFn: async () => {
+			await new Promise((resolve) => setTimeout(resolve, 500));
+			return getProduct({ id });
+		},
 	});
 
 	return { product: productQuery.data, ...productQuery };
@@ -63,8 +58,29 @@ export function useCreateProduct() {
 		mutationFn: createProduct,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["productsPage"] });
-		}
+		},
 	});
 
 	return createMutation;
+}
+
+export function useEditProduct() {
+	const queryClient = useQueryClient();
+
+	const editMutation = useMutation({
+		mutationFn: editProduct,
+		onSuccess: (_, variables) => {
+			// Instantly overwrite the specific product cache with the new input
+			queryClient.setQueryData(["product", variables.id], (oldData: Product) => ({
+				...oldData,
+				...variables,
+			}));
+
+			// Trigger a background refetch to ensure strict DB sync
+			queryClient.invalidateQueries({ queryKey: ["product", variables.id] });
+			queryClient.invalidateQueries({ queryKey: ["productsPage"] });
+		},
+	});
+
+	return editMutation;
 }
