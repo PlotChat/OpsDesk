@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
-import type { Product } from "./getProducts";
+import type { Product } from "../types/types";
+
 
 export async function deleteProduct({
 	id
