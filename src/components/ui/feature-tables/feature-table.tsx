@@ -7,6 +7,7 @@ type FeatureTableProps<T> = DataTableProps<T> & {
 	tableClassName?: string;
 	renderHeaderActions?: () => React.ReactNode;
 	children?: ReactNode;
+	isTableFixed?: boolean,
 };
 
 function FeatureTable<T>({
@@ -20,17 +21,17 @@ function FeatureTable<T>({
 	tableClassName,
 	renderFeatureActions,
 	renderHeaderActions,
+	isTableFixed = true,
 	children,
 }: FeatureTableProps<T>) {
 	return (
 		<section className={cn(className, "w-full")}>
 			<div className="flex justify-between mb-2.5">
 				<h1 className="text-xl">{title}</h1>
-				<div className="space-x-2">
-					{renderHeaderActions && renderHeaderActions()}
-				</div>
+
+				{renderHeaderActions && renderHeaderActions()}
 			</div>
-			
+
 			<DataTable
 				data={data}
 				columns={columns}
@@ -38,6 +39,7 @@ function FeatureTable<T>({
 				className={tableClassName}
 				isLoading={isLoading}
 				defaultTotalRows={defaultTotalRows}
+				isTableFixed={isTableFixed}
 				renderFeatureActions={renderFeatureActions}
 			></DataTable>
 
