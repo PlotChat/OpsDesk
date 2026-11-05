@@ -12,7 +12,7 @@ import { cn } from "cn";
 
 const labelStyles = "p-3 bg-muted/70 rounded-lg";
 
-const ViewOrderDialog = ({
+const ViewHandleOrderDialog = ({
 	open,
 	onOpenChange,
 	orderId,
@@ -31,7 +31,7 @@ const ViewOrderDialog = ({
 				</DialogHeader>
 
 				{isPending ? (
-					<ViewOrderDialogSkeleton></ViewOrderDialogSkeleton>
+					<ViewHandleOrderDialogSkeleton></ViewHandleOrderDialogSkeleton>
 				) : (
 					<>
 						<div className={labelStyles}>
@@ -67,9 +67,9 @@ const ViewOrderDialog = ({
 		</Dialog>
 	);
 };
-export default ViewOrderDialog;
+export default ViewHandleOrderDialog;
 
-const ViewOrderDialogSkeleton = () => {
+const ViewHandleOrderDialogSkeleton = () => {
 	return (
 		<>
 			<div className={cn(labelStyles, "h-18 animate-pulse")}>
