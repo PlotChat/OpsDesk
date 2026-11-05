@@ -17,7 +17,7 @@ const ProductTableActions = ({
 	productId,
 	onView,
 }: {
-	productId: string;
+	productId: Product["id"];
 	onView: () => void;
 }) => {
 	const { deleteProduct, isDeleting } = useDeleteProduct();
@@ -88,7 +88,7 @@ export const ProductsTable = () => {
 
 	// When a product id is selected through actions in the table, a modal will appear.
 	// To close the modal we make this null (according to conditionals at the end of this component)
-	const [currProductId, setCurrProductId] = useState<string | null>(null);
+	const [currProductId, setCurrProductId] = useState<Product["id"] | null>(null);
 
 	if (isPending) return <div>Loading...</div>;
 	if (isError) return <div>Error: {error.message}</div>;
