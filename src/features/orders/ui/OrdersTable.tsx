@@ -1,35 +1,20 @@
 import { useState } from "react";
-import { useDeleteOrder, useGetOrdersPage } from "../hooks/useOrders";
+import { useGetOrdersPage } from "../hooks/useOrders";
 import FeatureTable from "@/components/ui/feature-tables/feature-table";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
 import type { Order } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
-import ViewOrderDialog from "./ViewOrderDialog";
-import { toast } from "@/components/ui/toast";
+import ViewOrderDialog from "./ViewHandleOrderDialog";
 import { TbReload } from "react-icons/tb";
 import { useQueryClient } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
 
-const OrderTableActions = ({ orderId, onView }: { orderId: Order["id"]; onView: () => void }) => {
-	const { deleteOrder, isDeleting } = useDeleteOrder();
-
+const OrderTableActions = ({ onView }: { orderId: Order["id"]; onView: () => void }) => {
 	return (
 		<div className="flex gap-1 justify-center">
-			<Button onClick={onView} disabled={isDeleting}>
-				View / Edit
-			</Button>
-			<Button
-				variant="destructive"
-				onClick={() => {
-					deleteOrder({ id: orderId });
-					toast.add({
-						title: "Product deleted!",
-						description: new Intl.DateTimeFormat().format(),
-					});
-				}}
-				disabled={isDeleting}
-			>
-				{isDeleting ? "..." : "Delete"}
+			<Button variant="default" onClick={onView}>
+				View / Handle
 			</Button>
 		</div>
 	);
@@ -48,9 +33,28 @@ const OrdersHeaderActions = () => {
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name" },
-	{ key: "status", label: "Status" },
 	{ key: "total_amount", label: "Total" },
 	{ key: "created_at", label: "Created at" },
+	{
+		key: "status",
+		label: "Status",
+		renderElements: (row) => {
+			const variantMap: Record<
+				string,
+				"pending" | "shipped" | "delivered" | "cancelled" | "default" | "processing"
+			> = {
+				Pending: "pending",
+				Processing: "processing",
+				Shipped: "shipped",
+				Delivered: "delivered",
+				Cancelled: "cancelled",
+			};
+
+			const variant = variantMap[row.status] || "default";
+
+			return <Badge variant={variant}>{row.status}</Badge>;
+		},
+	},
 ] satisfies DataTableColumn<Order>[];
 
 const OrdersTable = () => {
