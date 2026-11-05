@@ -49,13 +49,6 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 	return (
 		<>
 			<div className="flex gap-2">
-				<Button
-					onClick={() =>
-						queryClient.invalidateQueries({ queryKey: ["productsPage"] })
-					}
-				>
-					<TbReload></TbReload>
-				</Button>
 				<Button>
 					<span className="hidden md:block">Export {title.toLowerCase()}</span>
 					<TbFileExport />
@@ -63,6 +56,13 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 				<Button onClick={() => setIsViewCreateModal(true)}>
 					<span className="hidden md:block">Add new item</span>
 					<IoMdAdd />
+				</Button>
+				<Button
+					onClick={() =>
+						queryClient.invalidateQueries({ queryKey: ["productsPage"] })
+					}
+				>
+					<TbReload></TbReload>
 				</Button>
 			</div>
 
