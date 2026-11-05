@@ -122,7 +122,7 @@ function ProductEditForm({
 					price,
 					stock_level: stock,
 					categories: chosenCategories,
-				}
+				},
 			},
 			{
 				onSuccess: () => {
@@ -277,28 +277,32 @@ function ProductEditForm({
 function ViewEditProductSkeleton() {
 	return (
 		<FieldSet>
-			<FieldGroup className="flex flex-col gap-4 mt-6 mb-10">
+			<FieldGroup className="flex flex-col gap-4 mt-6">
 				<Field>
-					<div className={`${getFieldStyles()} h-20 animate-pulse`}></div>
+					<div className={`${getFieldStyles()} h-19 animate-pulse`}></div>
 				</Field>
 				<Field>
-					<div className={`${getFieldStyles()} h-20 animate-pulse`}></div>
+					<div className={`${getFieldStyles()} h-19 animate-pulse`}></div>
 				</Field>
 				<Field>
-					<div className={`${getFieldStyles()} h-20 animate-pulse`}></div>
+					<div className={`${getFieldStyles()} h-19 animate-pulse`}></div>
 				</Field>
 				<div className="flex gap-4">
 					<Field className="flex-1">
-						<div className={`${getFieldStyles()} h-15 animate-pulse`}></div>
+						<div className={`${getFieldStyles()} h-19 animate-pulse`}></div>
 					</Field>
 					<Field className="flex-1">
-						<div className={`${getFieldStyles()} h-15 animate-pulse`}></div>
+						<div className={`${getFieldStyles()} h-19 animate-pulse`}></div>
 					</Field>
 				</div>
 				<Field>
 					<div className={`${getFieldStyles()} h-15 animate-pulse`}></div>
 				</Field>
 			</FieldGroup>
+			<div className="mt-2 gap-2 flex justify-end">
+				<Button type="button" disabled variant="secondary" className={"animate-pulse w-15"}></Button>
+				<Button type="button" disabled variant="default" className={"animate-pulse w-15"}></Button>
+			</div>
 		</FieldSet>
 	);
 }
