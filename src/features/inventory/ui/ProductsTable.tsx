@@ -88,7 +88,7 @@ export const ProductsTable = () => {
 
 	// When a product id is selected through actions in the table, a modal will appear.
 	// To close the modal we make this null (according to conditionals at the end of this component)
-	const [currProductId, setCurrProductId] = useState<Product["id"] | null>(null);
+	const [currProductId, setCurrProductId] = useState<Product["id"]>("");
 
 	if (isPending) return <div>Loading...</div>;
 	if (isError) return <div>Error: {error.message}</div>;
@@ -134,9 +134,9 @@ export const ProductsTable = () => {
 				<ViewEditProductItemDialog
 					productId={currProductId}
 					title={`Product Details`}
-					open={true}
+					open={currProductId ? true : false}
 					onOpenChange={(isOpen) => {
-						if (!isOpen) setCurrProductId(null);
+						if (!isOpen) setCurrProductId("");
 					}}
 				></ViewEditProductItemDialog>
 			)}
