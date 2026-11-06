@@ -10,8 +10,8 @@ import { useState } from "react";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
 import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
 import CreateProductDialog from "./CreateProductDialog";
-import { TbReload } from "react-icons/tb";
 import { useQueryClient } from "@tanstack/react-query";
+import ReloadButton from "@/components/ui/reload-button";
 
 const ProductTableActions = ({
 	productId,
@@ -42,7 +42,7 @@ const ProductTableActions = ({
 	);
 };
 
-const ProductHeaderActions = ({ title }: { title: string }) => {
+const ProductHeaderActions = ({ title, isLoading }: { title: string, isLoading: boolean }) => {
 	const [isViewCreateModal, setIsViewCreateModal] = useState<boolean>(false);
 	const queryClient = useQueryClient();
 
@@ -57,13 +57,10 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 					<span className="hidden md:block">Add new item</span>
 					<IoMdAdd />
 				</Button>
-				<Button
-					onClick={() =>
-						queryClient.invalidateQueries({ queryKey: ["productsPage"] })
-					}
-				>
-					<TbReload></TbReload>
-				</Button>
+				<ReloadButton
+					isLoading={isLoading}
+					onClick={() => queryClient.invalidateQueries({ queryKey: ["productsPage"] })}
+				></ReloadButton>
 			</div>
 
 			{isViewCreateModal && (
@@ -83,8 +80,9 @@ const ProductHeaderActions = ({ title }: { title: string }) => {
 export const ProductsTable = () => {
 	const pageSize = 10;
 	const [currentPage, setCurrentPage] = useState(1);
-	const { products, totalPages, isPending, isPlaceholderData, isError, error } =
-		useGetProductsPage({ page: currentPage, pageSize });
+	const { products, totalPages, isPending, isFetching, isPlaceholderData, isError, error } = useGetProductsPage(
+		{ page: currentPage, pageSize },
+	);
 
 	// When a product id is selected through actions in the table, a modal will appear.
 	// To close the modal we make this null (according to conditionals at the end of this component)
@@ -96,7 +94,7 @@ export const ProductsTable = () => {
 	const productColumns = [
 		{ key: "sku", label: "SKU", width: "md", truncate: true },
 		{ key: "name", label: "Name", width: "xl", truncate: true },
-		{ key: "price", label: "Price"},
+		{ key: "price", label: "Price" },
 		{ key: "created_at", label: "Created at" },
 	] satisfies DataTableColumn<Product>[];
 
@@ -112,12 +110,9 @@ export const ProductsTable = () => {
 					isLoading={isPlaceholderData}
 					rowKey={"id"}
 					renderFeatureActions={(row: Product) => (
-						<ProductTableActions
-							productId={row.id}
-							onView={() => setCurrProductId(row.id)}
-						/>
+						<ProductTableActions productId={row.id} onView={() => setCurrProductId(row.id)} />
 					)}
-					renderHeaderActions={() => <ProductHeaderActions title="Products" />}
+					renderHeaderActions={() => <ProductHeaderActions isLoading={isFetching} title="Products" />}
 				/>
 			</div>
 
