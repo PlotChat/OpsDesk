@@ -1,14 +1,14 @@
 import { TbReload } from "react-icons/tb";
 import { Button } from "./button";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentProps } from "react";
 
-interface ReloadButtonProps extends ComponentPropsWithoutRef<"button">{
-    isLoading: boolean,
+interface ReloadButtonProps extends ComponentProps<typeof Button> {
+    isLoading: boolean;
 }
 
-const ReloadButton = ({isLoading, onClick, children}: ReloadButtonProps) => {
+const ReloadButton = ({isLoading, onClick, children, ...props}: ReloadButtonProps) => {
 	return (
-		<Button onClick={onClick}>
+		<Button {...props} onClick={onClick}>
 			<TbReload className={isLoading ? "animate-spin opacity-50" : ""}></TbReload>
             {children}
 		</Button>
