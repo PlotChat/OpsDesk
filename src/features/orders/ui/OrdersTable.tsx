@@ -6,9 +6,9 @@ import type { Order } from "../types/types";
 import { Button } from "@/components/ui/button";
 import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
 import ViewOrderDialog from "./ViewHandleOrderDialog";
-import { TbReload } from "react-icons/tb";
 import { useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import ReloadButton from "@/components/ui/reload-button";
 
 const OrderTableActions = ({ onView }: { orderId: Order["id"]; onView: () => void }) => {
 	return (
@@ -20,13 +20,15 @@ const OrderTableActions = ({ onView }: { orderId: Order["id"]; onView: () => voi
 	);
 };
 
-const OrdersHeaderActions = () => {
+const OrdersHeaderActions = (isLoading: boolean) => {
 	const queryClient = useQueryClient();
+
 	return (
 		<div className="flex gap-2">
-			<Button onClick={() => queryClient.invalidateQueries({ queryKey: ["ordersPage"] })}>
-				<TbReload></TbReload>
-			</Button>
+			<ReloadButton
+				isLoading={isLoading}
+				onClick={() => queryClient.invalidateQueries({ queryKey: ["ordersPage"] })}
+			></ReloadButton>
 		</div>
 	);
 };
@@ -41,7 +43,7 @@ const orderColumns = [
 		renderElements: (row) => {
 			const variantMap: Record<
 				string,
-				"pending" | "shipped" | "delivered" | "cancelled" | "default" | "processing"
+				"pending" | "shipped" | "delivered" | "cancelled" | "processing" | "default"
 			> = {
 				Pending: "pending",
 				Processing: "processing",
@@ -60,10 +62,11 @@ const orderColumns = [
 const OrdersTable = () => {
 	const [currOrderId, setCurrOrderId] = useState<Order["id"]>("");
 	const [currPage, setCurrPage] = useState<number>(1);
-	const { orders, totalPages, isPlaceholderData, isPending, isError, error } = useGetOrdersPage({
-		page: currPage,
-		pageSize: 10,
-	});
+	const { orders, totalPages, isPlaceholderData, isFetching, isPending, isError, error } =
+		useGetOrdersPage({
+			page: currPage,
+			pageSize: 10,
+		});
 
 	if (isPending) {
 		return <div>Loading</div>;
@@ -88,7 +91,7 @@ const OrdersTable = () => {
 						onView={() => setCurrOrderId(row.id)}
 					></OrderTableActions>
 				)}
-				renderHeaderActions={OrdersHeaderActions}
+				renderHeaderActions={() => OrdersHeaderActions(isFetching)}
 			></FeatureTable>
 
 			<FeatureTablePagination

@@ -1,14 +1,21 @@
 import { CopyButton } from "@/components/ui/copy-button";
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
-import type { Order } from "../types/types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import type { Order, OrderStatus } from "../types/types";
 import { useGetOrder } from "../hooks/useOrders";
 import { Button } from "@/components/ui/button";
 import { cn } from "cn";
+import {
+	Select,
+	SelectContent,
+	SelectGroup,
+	SelectItem,
+	SelectLabel,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+
+import { useState } from "react";
+import { useOrderStatuses, useUpdateOrderStatus } from "../hooks/useOrderStatuses";
 
 const labelStyles = "p-3 bg-muted/70 rounded-lg";
 
@@ -47,7 +54,8 @@ const ViewHandleOrderDialog = ({
 								<label>Status</label>
 								<CopyButton value={order?.status || ""}></CopyButton>
 							</div>
-							<span>{order?.status}</span>
+
+							{order && <ViewHandleOrderStatusSelect order={order} />}
 						</div>
 
 						<div className={labelStyles}>
@@ -59,7 +67,9 @@ const ViewHandleOrderDialog = ({
 						</div>
 
 						<div className="flex justify-end gap-2">
-							<Button onClick={() => onOpenChange(false)} variant={"secondary"}>Close</Button>
+							<Button onClick={() => onOpenChange(false)} variant={"secondary"}>
+								Close
+							</Button>
 						</div>
 					</>
 				)}
@@ -68,6 +78,62 @@ const ViewHandleOrderDialog = ({
 	);
 };
 export default ViewHandleOrderDialog;
+
+const ViewHandleOrderStatusSelect = ({ order }: { order: Order }) => {
+	const {
+		orderStatuses,
+		isError: isOrderStatusError,
+		isPending: isOrderStatusPending,
+	} = useOrderStatuses();
+
+	const [chosenStatus, setChosenStatus] = useState<OrderStatus["id"] | null>(order.status || null);
+	const { mutate, isPending: isStatusUpdatePending, isError: isStatusUpdateError } = useUpdateOrderStatus();
+
+	const statusSelectItems: { label: string; value: OrderStatus["id"] }[] = (
+		orderStatuses || []
+	).map((s: OrderStatus) => ({
+		label: s.id,
+		value: s.id,
+	}));
+
+	return (
+		<>
+			<Select
+				disabled={isOrderStatusPending || isStatusUpdatePending}
+				value={chosenStatus}
+				onValueChange={(value: OrderStatus["id"] | null) => {
+					setChosenStatus(value || null);
+					if (value) mutate({ orderId: order.id, newStatus: value });
+					else return;
+				}}
+			>
+				<SelectTrigger className="w-full max-w-48">
+					<SelectValue placeholder="None">
+						{isOrderStatusPending || isStatusUpdatePending ? "Loading..." : chosenStatus}
+					</SelectValue>
+				</SelectTrigger>
+				<SelectContent>
+					<SelectGroup>
+						<SelectLabel>Order Status</SelectLabel>
+						{statusSelectItems.map((item) => (
+							<SelectItem key={item.value} value={item.value}>
+								{item.label}
+							</SelectItem>
+						))}
+					</SelectGroup>
+				</SelectContent>
+			</Select>
+
+			{isOrderStatusError && !isOrderStatusPending && (
+				<span className="text-red-500">Error loading order statuses</span>
+			)}
+
+			{isStatusUpdateError && (
+				<span className="text-red-500">Error updating order status</span>
+			)}
+		</>
+	);
+};
 
 const ViewHandleOrderDialogSkeleton = () => {
 	return (
