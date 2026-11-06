@@ -3,7 +3,6 @@ import { type DataTableColumn } from "@/components/ui/feature-tables/data-table"
 import FeatureTable from "@/components/ui/feature-tables/feature-table";
 import { toast } from "@/components/ui/toast";
 import { IoMdAdd } from "react-icons/io";
-import { TbFileExport } from "react-icons/tb";
 import type { Product } from "../types/types";
 import { useDeleteProduct, useGetProductsPage } from "../hooks/useProducts";
 import { useState } from "react";
@@ -42,19 +41,14 @@ const ProductTableActions = ({
 	);
 };
 
-const ProductHeaderActions = ({ title, isLoading }: { title: string, isLoading: boolean }) => {
+const ProductHeaderActions = ({ isLoading }: { title: string; isLoading: boolean }) => {
 	const [isViewCreateModal, setIsViewCreateModal] = useState<boolean>(false);
 	const queryClient = useQueryClient();
 
 	return (
 		<>
-			<div className="flex gap-2">
-				<Button>
-					<span className="hidden md:block">Export {title.toLowerCase()}</span>
-					<TbFileExport />
-				</Button>
+			<div className="flex gap-2 *:aspect-square *:h-9">
 				<Button onClick={() => setIsViewCreateModal(true)}>
-					<span className="hidden md:block">Add new item</span>
 					<IoMdAdd />
 				</Button>
 				<ReloadButton
@@ -68,7 +62,7 @@ const ProductHeaderActions = ({ title, isLoading }: { title: string, isLoading: 
 					productId={"a9d0e1c9-4e8f-4862-832a-85211b8334ae"}
 					title={`Create Product`}
 					open={true}
-					onOpenChange={(isOpen) => {
+					onOpenChange={(isOpen: boolean) => {
 						if (!isOpen) setIsViewCreateModal(false);
 					}}
 				></CreateProductDialog>
@@ -80,9 +74,8 @@ const ProductHeaderActions = ({ title, isLoading }: { title: string, isLoading: 
 export const ProductsTable = () => {
 	const pageSize = 10;
 	const [currentPage, setCurrentPage] = useState(1);
-	const { products, totalPages, isPending, isFetching, isPlaceholderData, isError, error } = useGetProductsPage(
-		{ page: currentPage, pageSize },
-	);
+	const { products, totalPages, isPending, isFetching, isPlaceholderData, isError, error } =
+		useGetProductsPage({ page: currentPage, pageSize });
 
 	// When a product id is selected through actions in the table, a modal will appear.
 	// To close the modal we make this null (according to conditionals at the end of this component)
@@ -112,7 +105,9 @@ export const ProductsTable = () => {
 					renderFeatureActions={(row: Product) => (
 						<ProductTableActions productId={row.id} onView={() => setCurrProductId(row.id)} />
 					)}
-					renderHeaderActions={() => <ProductHeaderActions isLoading={isFetching} title="Products" />}
+					renderHeaderActions={() => (
+						<ProductHeaderActions isLoading={isFetching} title="Products" />
+					)}
 				/>
 			</div>
 

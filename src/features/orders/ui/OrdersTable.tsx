@@ -24,7 +24,7 @@ const OrdersHeaderActions = (isLoading: boolean) => {
 	const queryClient = useQueryClient();
 
 	return (
-		<div className="flex gap-2">
+		<div className="flex gap-2 *:aspect-square *:h-9">
 			<ReloadButton
 				isLoading={isLoading}
 				onClick={() => queryClient.invalidateQueries({ queryKey: ["ordersPage"] })}
