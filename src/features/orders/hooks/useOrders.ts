@@ -4,12 +4,12 @@ import { deleteOrder } from "../api/deleteOrder.ts";
 import type { Order } from "../types/types.ts";
 import { formatTimeToDMY } from "@/lib/utils.ts";
 
-export function useGetOrdersPage({ page, pageSize }: OrderPagesProps) {
+export function useGetOrdersPage({ page, pageSize, sortBy, filterBy }: OrderPagesProps) {
 	const ordersQuery = useQuery({
-		queryKey: ["ordersPage", page, pageSize],
+		queryKey: ["ordersPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {
 			await new Promise((resolve) => setTimeout(resolve, 500));
-			return getOrdersPage({ page, pageSize });
+			return getOrdersPage({ page, pageSize, sortBy, filterBy });
 		},
 		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,

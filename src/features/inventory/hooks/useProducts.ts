@@ -5,12 +5,12 @@ import { createProduct } from "../api/createProduct";
 import { editProduct } from "../api/editProduct";
 import type { Product } from "../types/types";
 
-export function useGetProductsPage({ page, pageSize }: ProductPagesProps) {
+export function useGetProductsPage({ page, pageSize, sortBy, filterBy }: ProductPagesProps) {
 	const productsQuery = useQuery({
-		queryKey: ["productsPage", page, pageSize],
+		queryKey: ["productsPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {
 			await new Promise((resolve) => setTimeout(resolve, 500));
-			return getProductsPage({ pageSize, page });
+			return getProductsPage({ pageSize, page, sortBy, filterBy });
 		},
 		placeholderData: keepPreviousData,
 		refetchOnWindowFocus: false,

@@ -2,49 +2,36 @@ import type { ReactNode } from "react";
 import { DataTable, type DataTableProps } from "./data-table";
 import { cn } from "cn";
 
-type FeatureTableProps<T> = DataTableProps<T> & {
-	title: string;
-	tableClassName?: string;
-	renderHeaderActions?: () => React.ReactNode;
-	children?: ReactNode;
-	isTableFixed?: boolean,
+function FeatureTable({ children, className }: { children: ReactNode; className?: string }) {
+    return <section className={cn(className, "min-h-120 w-full flex flex-col")}>{children}</section>;
+}
+
+FeatureTable.Header = function FeatureTableHeader({ children, className }: { children: ReactNode; className?: string }) {
+    return <div className={cn("mb-4 flex flex-col gap-4", className)}>{children}</div>;
 };
 
-function FeatureTable<T>({
-	title,
-	defaultTotalRows,
-	data,
-	columns,
-	rowKey,
-	isLoading,
-	className,
-	tableClassName,
-	renderFeatureActions,
-	renderHeaderActions,
-	isTableFixed = true,
-	children,
-}: FeatureTableProps<T>) {
-	return (
-		<section className={cn(className, "w-full")}>
-			<div className="flex justify-between mb-2.5">
-				<h1 className="text-xl">{title}</h1>
+FeatureTable.Content = function FeatureTableContent<T>({
+    data,
+    columns,
+    rowKey,
+    isLoading,
+    className,
+    isTableFixed = true,
+    renderFeatureActions,
+}: DataTableProps<T>) {
+    return (
+        <div className="grow w-full flex flex-col">
+            <DataTable
+                data={data}
+                columns={columns}
+                rowKey={rowKey}
+                className={className}
+                isLoading={isLoading}
+                isTableFixed={isTableFixed}
+                renderFeatureActions={renderFeatureActions}
+            ></DataTable>
+        </div>
+    );
+};
 
-				{renderHeaderActions && renderHeaderActions()}
-			</div>
-
-			<DataTable
-				data={data}
-				columns={columns}
-				rowKey={rowKey}
-				className={tableClassName}
-				isLoading={isLoading}
-				defaultTotalRows={defaultTotalRows}
-				isTableFixed={isTableFixed}
-				renderFeatureActions={renderFeatureActions}
-			></DataTable>
-
-			{children}
-		</section>
-	);
-}
 export default FeatureTable;
