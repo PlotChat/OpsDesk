@@ -1,6 +1,7 @@
 import { Navigate, Outlet, Route, Routes } from "react-router";
-import DashboardPage from "./pages/DashboardPage";
+import Main from "./components/layout/Main";
 import ProductsTable from "./features/inventory/ui/ProductsTable";
+import OrdersTable from "./features/orders/ui/OrdersTable";
 
 /* Todo: integrate authentication */
 const ProtectedRoute = ({ isAuthenticated }: { isAuthenticated: boolean }) => {
@@ -16,23 +17,19 @@ const App = () => {
 		<Routes>
 			/* Dashboard Routes */
 			<Route element={<ProtectedRoute isAuthenticated={true}></ProtectedRoute>}>
-				<Route element={<DashboardPage />} path="/dashboard">
-					<Route index element={<Navigate to="products" replace />}></Route>
-					<Route path="products" element={<ProductsTable/>}></Route>
+				<Route element={<Main />} path="/">
+					<Route element={<Navigate to="/products" />} index></Route>
+					<Route element={<div>404 Not Found</div>} path="*"></Route>
+
+					<Route element={<ProductsTable></ProductsTable>} path="/products"></Route>
+					<Route element={<OrdersTable></OrdersTable>} path="/orders"></Route>
 				</Route>
 			</Route>
+
 			/* Fallback Routes */
 			<Route
-				path="/"
-				element={
-					<Navigate to={"/dashboard"} replace />
-				} /* Todo: integrate authentication */
-			/>
-			<Route
 				path="*"
-				element={
-					<Navigate to={"/dashboard"} replace />
-				} /* Todo: integrate authentication */
+				element={<Navigate to={"/register"} replace />} /* Todo: integrate authentication */
 			/>
 		</Routes>
 	);
