@@ -1,66 +1,105 @@
 import { LuShoppingBag } from "react-icons/lu";
-import { Button } from "../ui/button";
 import { IoReceiptOutline } from "react-icons/io5";
-import { useNavigate } from "react-router";
-import type { IconType } from "react-icons/lib";
+import { Link, useLocation } from "react-router";
+import {
+	Sidebar as ShadcnSidebar,
+	SidebarContent,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarHeader,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarTrigger,
+	useSidebar,
+} from "@/components/ui/sidebar";
+import { Button } from "../ui/button";
+import { cn } from "cn";
+import logo from "@/assets/logo.svg";
+import { Separator } from "../ui/separator";
+
+const navItems = [
+	{
+		title: "Products",
+		url: "./products",
+		icon: LuShoppingBag,
+	},
+	{
+		title: "Orders",
+		url: "./orders",
+		icon: IoReceiptOutline,
+	},
+];
 
 const Sidebar = () => {
+	const location = useLocation();
+	const { setOpen, openMobile, isMobile } = useSidebar();
+
+	const handleMouseEnter = () => {
+		if (!isMobile) {
+			setOpen(true);
+		}
+	};
+
+	const handleMouseLeave = () => {
+		if (!isMobile) {
+			setOpen(false);
+		}
+	};
+
 	return (
 		<>
-			{/* The sidebar's real space (acts like a wrapper too) */}
-			<div
-				className="
-          [ relative peer/sidebar ]
-          [ w-15 min-w-15 h-full min-h-screen ]
-          [ z-999 ]
-        "
+			{!openMobile && (
+				<SidebarTrigger
+					render={<Button variant="outline" className={"bg-background"}></Button>}
+					className={cn("absolute top-2 left-2 md:hidden p-4 z-1000")}
+				></SidebarTrigger>
+			)}
+			<ShadcnSidebar
+				onMouseEnter={handleMouseEnter}
+				onMouseLeave={handleMouseLeave}
+				collapsible="icon"
+				className="sticky m-0 border-r border-border"
 			>
-        {/* The sidebar */}
-				<aside
-					className="
-            [ absolute flex flex-col justify-between ] 
-            [ w-12 h-full py-2 px-2 gap-2 ] 
-            [ hover:w-50 transition-[width] duration-100 delay-200 ease-in-out ]
-            [ bg-popover text-popover-foreground border-r-border border-r ]
-          "
-				>
-          <nav className="overflow-hidden">
-            {/* Top section */}
-            <section className="flex flex-col gap-2 overflow-hidden ps-1">
-              <SidebarButton IconComponent={LuShoppingBag} label="Products" navigateTo="./products"/>
-              <SidebarButton IconComponent={IoReceiptOutline} label="Orders" navigateTo="./orders"/>
-            </section>
-          </nav>
-				</aside>
-			</div>
+				<SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupContent>
+							{isMobile && (
+								<>
+									<SidebarHeader className="p-3">
+										<h1 className="flex items-center">
+											Powered by{" "}
+											<span className="ms-2 me-0.5">
+												<img className="size-4" src={logo}></img>
+											</span>{" "}
+											OpsDesk
+										</h1>
+									</SidebarHeader>
+									<Separator></Separator>
+								</>
+							)}
+							<SidebarMenu className="mt-2">
+								{navItems.map((item) => {
+									const isActive = location.pathname.includes(item.url.replace("./", ""));
 
-			{/* Sidebar background filer when sidebar is hovered */}
-
-			<div
-				className="
-          [ peer/sidebarBg absolute ]
-          [ inset-0 ]
-          [ peer-hover/sidebar:opacity-100 delay-200 transition-all duration-200]
-          [ bg-black/35 z-998 pointer-events-none opacity-0 ]
-        "
-			></div>
+									return (
+										<SidebarMenuItem key={item.title}>
+											<SidebarMenuButton isActive={isActive} tooltip={item.title}>
+												<Link to={item.url} className="flex items-center gap-2">
+													<item.icon className="size-5 shrink-0" />
+													<span>{item.title}</span>
+												</Link>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									);
+								})}
+							</SidebarMenu>
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
+			</ShadcnSidebar>
 		</>
 	);
 };
 
 export default Sidebar;
-
-const SidebarButton = ({IconComponent, label, navigateTo}: {IconComponent: IconType, label: string, navigateTo: string}) => {
-  const navigate = useNavigate();
-
-	return (
-		<Button
-			variant="ghost"
-			className="flex gap-2 h-10 justify-start items-center px-0"
-			onClick={() => navigate(`${navigateTo}`)}
-		>
-			{IconComponent && <IconComponent className={"size-5 me-2"}></IconComponent>}
-      <span>{label}</span>
-		</Button>
-	);
-};
