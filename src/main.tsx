@@ -6,18 +6,21 @@ import "./index.css";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider.tsx";
 import { Toaster } from "./components/ui/toast.tsx";
+import { AuthContextProvider } from "./features/authentication/context/AuthContextProvider.tsx";
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<ThemeProvider>
-			<BrowserRouter>
-				<QueryClientProvider client={queryClient}>
-					<App />
-					<Toaster></Toaster>
-				</QueryClientProvider>
-			</BrowserRouter>
-		</ThemeProvider>
+		<AuthContextProvider>
+			<ThemeProvider>
+				<BrowserRouter>
+					<QueryClientProvider client={queryClient}>
+						<App />
+						<Toaster></Toaster>
+					</QueryClientProvider>
+				</BrowserRouter>
+			</ThemeProvider>
+		</AuthContextProvider>
 	</StrictMode>,
 );
