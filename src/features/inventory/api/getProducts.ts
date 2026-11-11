@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import type { PostgrestError } from "@supabase/supabase-js";
 import type {
 	Category,
 	Product,
@@ -9,19 +8,11 @@ import type {
 	RawProduct,
 } from "../types/types";
 import { calcTotalPages, formatTimeToDMY, getPageRange } from "@/lib/utils";
+import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/types/tables/table-types";
 
-export interface ProductPagesResponse {
-	data: Product[];
-	totalPages: number | null;
-	count: number | null;
-	error: PostgrestError | null;
-}
-
-export interface ProductPagesProps {
+export interface ProductPagesProps extends FeatureTablePagesProps{
 	sortBy?: ProductSortType;
 	filterBy?: ProductFilterType;
-	page: number;
-	pageSize: number;
 }
 
 export async function getProductsPage({
@@ -29,7 +20,7 @@ export async function getProductsPage({
 	filterBy = { categories: [], minPrice: 0, maxPrice: Number.MAX_VALUE, name: "", sku: "" },
 	page,
 	pageSize,
-}: ProductPagesProps): Promise<ProductPagesResponse> {
+}: ProductPagesProps): Promise<FeatureTablePagesResponse<Product>> {
 	const {from, to} = getPageRange(page, pageSize);
 
 	// Conditionally apply the !inner join ONLY when we are filtering by categories.

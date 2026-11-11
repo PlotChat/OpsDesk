@@ -2,18 +2,10 @@ import { supabase } from "@/lib/supabase";
 import type { Order, OrderFilterType, OrderSortType } from "../types/types";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { calcTotalPages, getPageRange } from "@/lib/utils";
-
-interface OrdersPagesResponse {
-	data: Order[];
-	totalPages: number | null;
-	count: number | null;
-	error: PostgrestError | null;
-}
-export interface OrderPagesProps {
+import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/types/tables/table-types";
+export interface OrderPagesProps extends FeatureTablePagesProps{
 	sortBy?: OrderSortType;
 	filterBy?: OrderFilterType;
-	page: number;
-	pageSize: number;
 }
 
 export async function getOrdersPage({
@@ -21,7 +13,7 @@ export async function getOrdersPage({
 	filterBy = { customer_name: "" },
 	page,
 	pageSize,
-}: OrderPagesProps): Promise<OrdersPagesResponse> {
+}: OrderPagesProps): Promise<FeatureTablePagesResponse<Order>> {
 	const { from, to } = getPageRange(page, pageSize);
 
 	/* Declare base query */
