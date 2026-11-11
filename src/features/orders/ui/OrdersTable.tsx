@@ -90,7 +90,6 @@ const OrdersTable = () => {
 				/>
 
 				<FeatureTablePagination
-					className="mt-3"
 					currentPage={currPage}
 					totalPages={totalPages}
 					onPageChange={setCurrPage}

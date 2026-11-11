@@ -16,6 +16,7 @@ import {
 
 import { useState } from "react";
 import { useOrderStatuses, useUpdateOrderStatus } from "../hooks/useOrderStatuses";
+import { FaSave } from "react-icons/fa";
 
 const labelStyles = "p-3 bg-muted/70 rounded-lg";
 
@@ -87,7 +88,11 @@ const ViewHandleOrderStatusSelect = ({ order }: { order: Order }) => {
 	} = useOrderStatuses();
 
 	const [chosenStatus, setChosenStatus] = useState<OrderStatus["id"] | null>(order.status || null);
-	const { mutate, isPending: isStatusUpdatePending, isError: isStatusUpdateError } = useUpdateOrderStatus();
+	const {
+		mutate,
+		isPending: isStatusUpdatePending,
+		isError: isStatusUpdateError,
+	} = useUpdateOrderStatus();
 
 	const statusSelectItems: { label: string; value: OrderStatus["id"] }[] = (
 		orderStatuses || []
@@ -97,14 +102,12 @@ const ViewHandleOrderStatusSelect = ({ order }: { order: Order }) => {
 	}));
 
 	return (
-		<>
+		<div className="flex gap-1">
 			<Select
 				disabled={isOrderStatusPending || isStatusUpdatePending}
 				value={chosenStatus}
 				onValueChange={(value: OrderStatus["id"] | null) => {
 					setChosenStatus(value || null);
-					if (value) mutate({ orderId: order.id, newStatus: value });
-					else return;
 				}}
 			>
 				<SelectTrigger className="w-full max-w-48">
@@ -124,14 +127,25 @@ const ViewHandleOrderStatusSelect = ({ order }: { order: Order }) => {
 				</SelectContent>
 			</Select>
 
+			{!isStatusUpdatePending && chosenStatus && chosenStatus !== order.status && (
+				<Button
+					variant="success"
+					onClick={() => {
+						if (chosenStatus) mutate({ orderId: order.id, newStatus: chosenStatus });
+						else return;
+					}}
+					className="ms-1"
+				>
+					<FaSave /> Save
+				</Button>
+			)}
+
 			{isOrderStatusError && !isOrderStatusPending && (
 				<span className="text-red-500">Error loading order statuses</span>
 			)}
 
-			{isStatusUpdateError && (
-				<span className="text-red-500">Error updating order status</span>
-			)}
-		</>
+			{isStatusUpdateError && <span className="text-red-500">Error updating order status</span>}
+		</div>
 	);
 };
 
