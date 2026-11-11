@@ -8,7 +8,7 @@ interface MainProps {
 	children?: ReactNode;
 }
 
-const Main = ({ children }: MainProps) => {
+const DashboardMain = ({ children }: MainProps) => {
 	return (
         <SidebarProvider defaultOpen={false}>
             <div className="flex flex-col h-screen w-full">
@@ -24,4 +24,4 @@ const Main = ({ children }: MainProps) => {
         </SidebarProvider>
 	);
 };
-export default Main;
+export default DashboardMain;

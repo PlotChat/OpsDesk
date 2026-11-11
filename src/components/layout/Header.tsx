@@ -23,7 +23,7 @@ const Header = () => {
 			>
 				{/* Left section */}
 				<section className="flex gap-2">
-					<button className="flex items-center" onClick={() => navigate("/")}>
+					<button className="flex items-center" onClick={() => navigate("/home")}>
 						<img src={icon} className="size-6"></img>
 					</button>
 				</section>
@@ -32,7 +32,7 @@ const Header = () => {
 				<section className="flex items-center gap-2">
 					{user ? (
 						<>
-							<button>
+							<button onClick={() => navigate("/profile")}>
 								<Avatar>
 									<AvatarImage src={fallbackPfp}></AvatarImage>
 									<AvatarFallback></AvatarFallback>
