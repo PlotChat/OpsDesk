@@ -75,7 +75,7 @@ const OrdersTable = () => {
 				</FeatureTable.Header>
 
 				<FeatureTable.Content
-					data={orders || []}
+					data={orders}
 					columns={orderColumns}
 					isLoading={isPlaceholderData}
 					isTableFixed={true}

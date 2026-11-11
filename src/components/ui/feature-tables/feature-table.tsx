@@ -22,7 +22,7 @@ FeatureTable.Content = function FeatureTableContent<T>({
     return (
         <div className="grow w-full flex flex-col">
             <DataTable
-                data={data}
+                data={data || []}
                 columns={columns}
                 rowKey={rowKey}
                 className={className}

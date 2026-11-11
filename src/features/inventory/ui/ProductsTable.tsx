@@ -111,7 +111,7 @@ export const ProductsTable = () => {
                 </FeatureTable.Header>
                 
                 <FeatureTable.Content
-                    data={products || []}
+                    data={products}
                     columns={productColumns}
                     isLoading={isPlaceholderData}
                     className="h-full"
