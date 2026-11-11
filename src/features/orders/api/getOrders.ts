@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import type { Order, OrderFilterType, OrderSortType } from "../types/types";
 import type { PostgrestError } from "@supabase/supabase-js";
+import { getPageRange } from "@/lib/utils";
 
 interface OrdersPagesResponse {
 	data: Order[];
@@ -17,26 +18,25 @@ export interface OrderPagesProps {
 
 export async function getOrdersPage({
 	sortBy = { column: "created_at", isAscending: false },
-	filterBy = {customer_name: ""},
+	filterBy = { customer_name: "" },
 	page,
 	pageSize,
 }: OrderPagesProps): Promise<OrdersPagesResponse> {
-	const from = (page - 1) * pageSize;
-	const to = page * pageSize - 1;
+	const { from, to } = getPageRange(page, pageSize);
 
 	/* Declare base query */
-	let query = supabase.from("orders").select("*", {count: "exact"});
+	let query = supabase.from("orders").select("*", { count: "exact" });
 
-	if(filterBy){
-		if(filterBy.customer_name){
-			query = query.ilike("customer_name", `%${filterBy.customer_name}%`)
+	if (filterBy) {
+		if (filterBy.customer_name) {
+			query = query.ilike("customer_name", `%${filterBy.customer_name}%`);
 		}
 	}
 
 	/* Start the query with await */
 	const { data, error, count } = await query
 		.order(sortBy.column, { ascending: sortBy.isAscending })
-		.order("id", {ascending: true}) // Extra sort by id to ensure pagination is correct
+		.order("id", { ascending: true }) // Extra sort by id to ensure pagination is correct
 		.range(from, to);
 
 	const totalPages = count !== null ? Math.ceil(count / pageSize) : null;

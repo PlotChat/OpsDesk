@@ -8,7 +8,7 @@ import type {
 	ProductSortType,
 	RawProduct,
 } from "../types/types";
-import { formatTimeToDMY } from "@/lib/utils";
+import { formatTimeToDMY, getPageRange } from "@/lib/utils";
 
 export interface ProductPagesResponse {
 	data: Product[];
@@ -30,8 +30,7 @@ export async function getProductsPage({
 	page,
 	pageSize,
 }: ProductPagesProps): Promise<ProductPagesResponse> {
-	const from = (page - 1) * pageSize;
-	const to = page * pageSize - 1;
+	const {from, to} = getPageRange(page, pageSize);
 
 	// Conditionally apply the !inner join ONLY when we are filtering by categories.
 	// This forces supabase to filter out the Products themselves, not just their nested categories.
