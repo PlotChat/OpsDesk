@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/pagination";
 import { generatePagination } from "@/utils/generatePagination";
 
-interface FeatureTablePaginationProps {
+export interface FeatureTablePaginationProps {
 	currentPage: number;
 	totalPages: number;
 	className?: string;
