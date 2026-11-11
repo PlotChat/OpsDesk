@@ -1,7 +1,7 @@
 import { type DataTableColumn } from "@/components/ui/feature-tables/data-table";
 import FeatureTable from "@/components/ui/feature-tables/feature-table";
 import { toast } from "@/components/ui/toast";
-import type { Product, ProductFilterType, SortableProductColumns } from "../types/types";
+import type { Product, ProductFilterType, ProductSortType } from "../types/types";
 import { useDeleteProduct, useGetProductsPage } from "../hooks/useProducts";
 import { useState } from "react";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
@@ -24,34 +24,33 @@ export const ProductsTable = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [isViewCreateModal, setIsViewCreateModal] = useState<boolean>(false);
 
-    // Handle sorting, filtering and getting products
-    const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-    const [sortBy, setSortBy] = useState<SortableProductColumns>("date");
+    // Standardized sort state matching OrdersTable
+    const [sortBy, setSortBy] = useState<ProductSortType>({
+        column: "created_at",
+        isAscending: false,
+    });
+
     const [filters, setFilters] = useState<ProductFilterType>({
         categories: [],
         maxPrice: Number.MAX_VALUE,
         minPrice: 0,
-        name: "",
-        sku: "",
+        search: "",
     });
 
     const queryClient = useQueryClient();
     const { categories } = useGetCategories();
 
-    const handleFiltersChange = (filters: ProductFilterType) => {
-        if (!filters) return;
+    const handleFiltersChange = (newFilters: ProductFilterType) => {
+        if (!newFilters) return;
 
-        setFilters(filters);
+        setFilters(newFilters);
         setCurrentPage(1);
     };
 
-    const handleSortDirChange = (dir: "asc" | "desc") => {
-        setSortDir(dir);
-        setCurrentPage(1);
-    };
+    const handleSortBy = (newSort: ProductSortType) => {
+        if (!newSort) return;
 
-    const handleSortByChange = (col: SortableProductColumns) => {
-        setSortBy(col);
+        setSortBy(newSort);
         setCurrentPage(1);
     };
 
@@ -59,14 +58,7 @@ export const ProductsTable = () => {
         useGetProductsPage({
             page: currentPage,
             pageSize,
-            sortBy: {
-                column: (sortBy === "alphabet"
-                    ? "name"
-                    : sortBy === "date"
-                        ? "created_at"
-                        : sortBy) as keyof Product,
-                isAscending: sortDir === "asc",
-            },
+            sortBy,
             filterBy: filters,
         });
 
@@ -84,10 +76,11 @@ export const ProductsTable = () => {
         { key: "created_at", label: "Created at" },
     ] satisfies DataTableColumn<Product>[];
 
+    // Options directly map to real database column names
     const sortOptions = [
-        { value: "alphabet", label: "Alphabet", icon: <BsAlphabetUppercase /> },
+        { value: "name", label: "Alphabet", icon: <BsAlphabetUppercase /> },
         { value: "price", label: "Price", icon: <IoPricetagsOutline /> },
-        { value: "date", label: "Date", icon: <MdAccessTime /> },
+        { value: "created_at", label: "Date", icon: <MdAccessTime /> },
     ];
 
     return (
@@ -98,19 +91,19 @@ export const ProductsTable = () => {
                     <FeatureTable.Title>Products</FeatureTable.Title>
 
                     <FeatureTable.Actions>
-                        {/* Search input */}
+                        {/* Search input - searches both name and SKU via Supabase .or() */}
                         <FeatureTable.Search
                             placeholder="Name or SKU..."
+                            value={filters.search}
                             onChange={(value) =>
                                 handleFiltersChange({
                                     ...filters,
-                                    name: value,
-                                    sku: value,
+                                    search: value,
                                 })
                             }
                         />
 
-                        {/* Filter dropdown */}
+                        {/* Filter dropdown - compares categories by id instead of object reference */}
                         <FeatureTable.Filter>
                             <DropdownMenuSub>
                                 <DropdownMenuSubTrigger>
@@ -118,37 +111,41 @@ export const ProductsTable = () => {
                                     Categories
                                 </DropdownMenuSubTrigger>
                                 <DropdownMenuSubContent>
-                                    {categories.map((c) => (
-                                        <DropdownMenuCheckboxItem
-                                            checked={filters?.categories.includes(c)}
-                                            onCheckedChange={() => {
-                                                if (!filters?.categories.includes(c)) {
+                                    {categories.map((c) => {
+                                        const isChecked = filters.categories.some((cat) => cat.id === c.id);
+                                        return (
+                                            <DropdownMenuCheckboxItem
+                                                key={c.id}
+                                                checked={isChecked}
+                                                onCheckedChange={() => {
+                                                    const nextCategories = isChecked
+                                                        ? filters.categories.filter((cat) => cat.id !== c.id)
+                                                        : [...filters.categories, c];
+
                                                     handleFiltersChange({
                                                         ...filters,
-                                                        categories: [...filters.categories, c],
+                                                        categories: nextCategories,
                                                     });
-                                                } else {
-                                                    handleFiltersChange({
-                                                        ...filters,
-                                                        categories: filters.categories.filter((_c) => _c !== c),
-                                                    });
-                                                }
-                                            }}
-                                            key={c.id}
-                                        >
-                                            {c.name}
-                                        </DropdownMenuCheckboxItem>
-                                    ))}
+                                                }}
+                                            >
+                                                {c.name}
+                                            </DropdownMenuCheckboxItem>
+                                        );
+                                    })}
                                 </DropdownMenuSubContent>
                             </DropdownMenuSub>
                         </FeatureTable.Filter>
 
-                        {/* Sort dropdown */}
+                        {/* Sort dropdown - standardized to { column, isAscending } */}
                         <FeatureTable.Sort
-                            sortDir={sortDir}
-                            onSortDirChange={handleSortDirChange}
-                            sortBy={sortBy}
-                            onSortByChange={(val) => handleSortByChange(val as SortableProductColumns)}
+                            sortDir={sortBy.isAscending ? "asc" : "desc"}
+                            onSortDirChange={(dir) =>
+                                handleSortBy({ ...sortBy, isAscending: dir === "asc" })
+                            }
+                            sortBy={sortBy.column}
+                            onSortByChange={(val) =>
+                                handleSortBy({ ...sortBy, column: val as keyof Product })
+                            }
                             options={sortOptions}
                         />
 

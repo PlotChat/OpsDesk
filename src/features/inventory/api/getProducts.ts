@@ -17,7 +17,7 @@ export interface ProductPagesProps extends FeatureTablePagesProps{
 
 export async function getProductsPage({
 	sortBy = { column: "created_at", isAscending: false },
-	filterBy = { categories: [], minPrice: 0, maxPrice: Number.MAX_VALUE, name: "", sku: "" },
+	filterBy = { categories: [], minPrice: 0, maxPrice: Number.MAX_VALUE, search: "" },
 	page,
 	pageSize,
 }: ProductPagesProps): Promise<FeatureTablePagesResponse<Product>> {
@@ -35,12 +35,17 @@ export async function getProductsPage({
 
 	// Filter by filterable columns
 	if (filterBy) {
-		if (filterBy.name) {
-			query = query.ilike("name", `%${filterBy.name}%`);
-		}
-		
-		if(filterBy.sku) {
-			query = query.ilike("sku", `%${filterBy.sku}%`);
+		const searchTerm = filterBy.search?.trim() || (filterBy.name && filterBy.name === filterBy.sku ? filterBy.name.trim() : null);
+
+		if (searchTerm) {
+			query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
+		} else {
+			if (filterBy.name) {
+				query = query.ilike("name", `%${filterBy.name}%`);
+			}
+			if (filterBy.sku) {
+				query = query.ilike("sku", `%${filterBy.sku}%`);
+			}
 		}
 
 		if (hasCategoryFilters) {

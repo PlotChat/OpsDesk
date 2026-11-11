@@ -37,12 +37,13 @@ export type ProductDbColumns = keyof Pick<Product, "id" | "name" | "price" | "cr
 
 export type FilterableProductColumns = "categories";
 
-export type ProductSortType = {column: keyof Product, isAscending: boolean};
+export type ProductSortType = { column: keyof Product, isAscending: boolean };
 
 export type ProductFilterType = {
 	categories: Category[];
 	minPrice: number;
 	maxPrice: number;
-	name: string;
-	sku: string;
+	search?: string;
+	name?: string;
+	sku?: string;
 };
