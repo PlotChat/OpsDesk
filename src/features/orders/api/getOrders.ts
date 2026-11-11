@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import type { Order, OrderFilterType, OrderSortType } from "../types/types";
 import type { PostgrestError } from "@supabase/supabase-js";
-import { getPageRange } from "@/lib/utils";
+import { calcTotalPages, getPageRange } from "@/lib/utils";
 
 interface OrdersPagesResponse {
 	data: Order[];
@@ -39,7 +39,7 @@ export async function getOrdersPage({
 		.order("id", { ascending: true }) // Extra sort by id to ensure pagination is correct
 		.range(from, to);
 
-	const totalPages = count !== null ? Math.ceil(count / pageSize) : null;
+	const totalPages = calcTotalPages(count, pageSize);
 
 	if (error) {
 		throw new Error("Error when fetching orders");

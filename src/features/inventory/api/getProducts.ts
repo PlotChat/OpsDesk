@@ -8,7 +8,7 @@ import type {
 	ProductSortType,
 	RawProduct,
 } from "../types/types";
-import { formatTimeToDMY, getPageRange } from "@/lib/utils";
+import { calcTotalPages, formatTimeToDMY, getPageRange } from "@/lib/utils";
 
 export interface ProductPagesResponse {
 	data: Product[];
@@ -91,7 +91,7 @@ export async function getProductsPage({
 		};
 	}) as Product[];
 
-	const totalPages = count !== null ? Math.ceil(count / pageSize) : null;
+	const totalPages = calcTotalPages(count, pageSize);
 
 	return { data: formattedData, error, count, totalPages };
 }

@@ -10,3 +10,9 @@ export const getPageRange = (page: number, pageSize: number) => {
 
 	return { from, to };
 };
+
+export const calcTotalPages = (count: number | null, pageSize: number) => {
+	const totalPages = count !== null ? Math.ceil(count / pageSize) : null;
+
+    return totalPages;
+};
