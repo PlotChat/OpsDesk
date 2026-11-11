@@ -97,7 +97,7 @@ export const ProductsTable = () => {
     return (
         <div className="mx-auto flex flex-col justify-between">
             {/* The products table */}
-            <FeatureTable className="h-180">
+            <FeatureTable className="h-170">
                 <FeatureTable.Header>
                     <ProductHeaderActions
                         isLoading={isFetching}
@@ -203,11 +203,11 @@ const ProductHeaderActions = ({
     return (
         <>
             {/* Title */}
-            <div className="flex items-center px-2 mb-4">
+            <div className="flex items-center">
                 <h1 className="text-2xl">Products</h1>
             </div>
 
-            <div className="w-full items-center flex gap-2 *:h-9.5 mb-3.5">
+            <div className="w-full items-center flex gap-2 *:h-9.5">
                 {/* Search input */}
                 <InputGroup>
                     <InputGroupAddon>
