@@ -23,6 +23,7 @@ import { IoMdAdd } from "react-icons/io";
 import { BiSortAlt2 } from "react-icons/bi";
 import { FaSortAmountDownAlt, FaSortAmountUp } from "react-icons/fa";
 import type { FeatureTableSortType } from "./types";
+import type { IconType } from "react-icons/lib";
 
 export interface FeatureTableProps extends React.ComponentProps<"section"> {
 	children?: ReactNode;
@@ -159,7 +160,7 @@ function FeatureTableFilter({
 export interface FeatureTableSortOption<T> {
 	value: Extract<keyof T, string>;
 	label: string;
-	icon?: ReactNode;
+	icon: IconType;
 }
 
 export interface FeatureTableSortProps<T> {
@@ -235,16 +236,19 @@ function FeatureTableSort<T>({
 									value={value.column}
 									onValueChange={(column) => onChange({ ...value, column })}
 								>
-									{options.map((opt) => (
-										<DropdownMenuRadioItem
-											key={opt.value}
-											value={opt.value}
-											onSelect={(e) => e.preventDefault()}
-										>
-											{opt.icon}
-											{opt.label}
-										</DropdownMenuRadioItem>
-									))}
+									{options.map((opt) => {
+										const Icon = opt.icon;
+										return (
+											<DropdownMenuRadioItem
+												key={opt.value}
+												value={opt.value}
+												onSelect={(e) => e.preventDefault()}
+											>
+												<Icon></Icon>
+												{opt.label}
+											</DropdownMenuRadioItem>
+										);
+									})}
 								</DropdownMenuRadioGroup>
 							</DropdownMenuGroup>
 						)}

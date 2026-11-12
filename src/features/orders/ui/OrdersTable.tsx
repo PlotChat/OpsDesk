@@ -38,10 +38,10 @@ const orderColumns = [
 ] satisfies DataTableColumn<Order>[];
 
 const orderSortOptions = [
-    { value: "customer_name", label: "Alphabet", icon: <BsAlphabetUppercase /> },
-    { value: "total_amount", label: "Total Amount", icon: <IoPricetagsOutline /> },
-    { value: "created_at", label: "Date", icon: <MdAccessTime /> },
-];
+	{ value: "customer_name", label: "Alphabet", icon: BsAlphabetUppercase },
+	{ value: "total_amount", label: "Total Amount", icon: IoPricetagsOutline },
+	{ value: "created_at", label: "Date", icon: MdAccessTime },
+] satisfies FeatureTableSortOption<Order>[];
 
 const OrdersTable = () => {
     const [currOrderId, setCurrOrderId] = useState<Order["id"]>("");

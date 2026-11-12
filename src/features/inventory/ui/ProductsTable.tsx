@@ -79,9 +79,9 @@ export const ProductsTable = () => {
 
 	// Options directly map to real database column names
 	const sortOptions = [
-		{ value: "name", label: "Alphabet", icon: <BsAlphabetUppercase /> },
-		{ value: "price", label: "Price", icon: <IoPricetagsOutline /> },
-		{ value: "created_at", label: "Date", icon: <MdAccessTime /> },
+		{ value: "name", label: "Alphabet", icon: BsAlphabetUppercase },
+		{ value: "price", label: "Price", icon: IoPricetagsOutline },
+		{ value: "created_at", label: "Date", icon: MdAccessTime },
 	] satisfies FeatureTableSortOption<Product>[];
 
 	return (
