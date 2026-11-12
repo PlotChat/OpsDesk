@@ -1,11 +1,12 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, getProductsPage, type ProductPagesProps } from "../api/getProducts";
+import { getProduct, getProductsPage } from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 import { createProduct } from "../api/createProduct";
 import { editProduct } from "../api/editProduct";
-import type { Product } from "../types/types";
+import type { Product, ProductFilterType } from "../types/types";
+import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types";
 
-export function useGetProductsPage({ page, pageSize, sortBy, filterBy }: ProductPagesProps) {
+export function useGetProductsPage({ page, pageSize, sortBy, filterBy }: FeatureTablePagesProps<Product, ProductFilterType>) {
 	const productsQuery = useQuery({
 		queryKey: ["productsPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {

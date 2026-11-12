@@ -31,13 +31,7 @@ export interface RawProduct {
 	category_name?: string;
 }
 
-export type SortableProductColumns = "alphabet" | "price" | "date";
-
 export type ProductDbColumns = keyof Pick<Product, "id" | "name" | "price" | "created_at">;
-
-export type FilterableProductColumns = "categories";
-
-export type ProductSortType = { column: keyof Product, isAscending: boolean };
 
 export type ProductFilterType = {
 	categories: Category[];

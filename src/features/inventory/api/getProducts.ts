@@ -4,23 +4,17 @@ import type {
 	Product,
 	ProductCategoryJunction,
 	ProductFilterType,
-	ProductSortType,
 	RawProduct,
 } from "../types/types";
 import { calcTotalPages, formatTimeToDMY, getPageRange } from "@/lib/utils";
-import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/types/tables/table-types";
-
-export interface ProductPagesProps extends FeatureTablePagesProps{
-	sortBy?: ProductSortType;
-	filterBy?: ProductFilterType;
-}
+import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/components/ui/feature-tables/types";
 
 export async function getProductsPage({
 	sortBy = { column: "created_at", isAscending: false },
 	filterBy = { categories: [], minPrice: 0, maxPrice: Number.MAX_VALUE, search: "" },
 	page,
 	pageSize,
-}: ProductPagesProps): Promise<FeatureTablePagesResponse<Product>> {
+}: FeatureTablePagesProps<Product, ProductFilterType>): Promise<FeatureTablePagesResponse<Product>> {
 	const {from, to} = getPageRange(page, pageSize);
 
 	// Conditionally apply the !inner join ONLY when we are filtering by categories.
