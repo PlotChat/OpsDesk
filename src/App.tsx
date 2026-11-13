@@ -8,15 +8,20 @@ import useAuthContext from "./features/authentication/hooks/useAuthContext";
 import DashboardPage from "./pages/DashboardPage";
 import Homepage from "./pages/Homepage";
 import ProfilePage from "./pages/ProfilePage";
+import AccountsTable from "./features/accounts/ui/AccountsTable";
 
 // Only staff routing
 const ProtectedRoute = () => {
 	const { user, userProfile, isLoading } = useAuthContext();
 
-	if (isLoading) return <div>Loading...</div>;
+	if (isLoading) return null;
+
+	// If they are not logged in, fallback to default route
 	if (!user) {
-		return <Navigate to="/auth/signin" />;
+		return <Navigate to="/" />;
 	}
+
+	// If they are logged in but not a staff, take them to home
 	if (user && userProfile && !["admin", "staff"].includes(userProfile.role)) {
 		return <Navigate to="/home" />;
 	}
@@ -28,26 +33,28 @@ const ProtectedRoute = () => {
 const AuthenticatedRoute = () => {
 	const { user, userProfile, isLoading } = useAuthContext();
 
-	if(!isLoading && (!user || !userProfile)){
+	if (isLoading) return null;
+
+	if (!isLoading && (!user || !userProfile)) {
 		return <Navigate to="/home" />;
 	}
 
 	return <Outlet></Outlet>;
-}
+};
 
 // Only Guests routing
 const PublicRoute = () => {
 	const { userProfile, isLoading } = useAuthContext();
 
-	if (isLoading) return <div>Loading...</div>;
+	// Only hold the screen blank if a session exists and we're waiting on their role
+	if (isLoading) return null;
 
-	switch (userProfile?.role) {
-		case "admin":
-			return <Navigate to="/dashboard" />;
-		case "staff":
-			return <Navigate to="/dashboard" />;
-		case "customer":
-			return <Navigate to="/home" />;
+	if (userProfile?.role === "admin" || userProfile?.role === "staff") {
+		return <Navigate to="/dashboard" replace />;
+	}
+
+	if (userProfile?.role === "customer") {
+		return <Navigate to="/home" replace />;
 	}
 
 	return <Outlet />;
@@ -65,15 +72,14 @@ const App = () => {
 						<Route element={<div>404 Not Found</div>} path="*"></Route>
 						<Route element={<ProductsTable></ProductsTable>} path="/dashboard/products"></Route>
 						<Route element={<OrdersTable></OrdersTable>} path="/dashboard/orders"></Route>
+						<Route element={<AccountsTable></AccountsTable>} path="/dashboard/accounts"></Route>
 					</Route>
 				</Route>
 			</Route>
-
 			/* Authenticated users Routes */
-			<Route element={<AuthenticatedRoute/>}>
+			<Route element={<AuthenticatedRoute />}>
 				<Route element={<ProfilePage></ProfilePage>} path="/profile"></Route>
 			</Route>
-
 			/* Guest only routes */
 			<Route element={<PublicRoute />}>
 				<Route element={<AuthPage />} path="/auth">
