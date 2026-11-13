@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
@@ -99,7 +99,7 @@ function ProductEditForm({
 		setLocalError("");
 	};
 
-	const handleSubmit = async (e: React.SubmitEvent) => {
+	const handleSubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
 
 		if (!hasInputChanged) {
