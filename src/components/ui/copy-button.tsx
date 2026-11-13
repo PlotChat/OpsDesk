@@ -49,6 +49,7 @@ export function CopyButton({ value, onCopy }: { value: string; onCopy?: () => vo
 
 	return (
 		<Button
+			type="button"
 			onClick={handleCopy}
 			size={"sm"}
 			variant="secondary"
