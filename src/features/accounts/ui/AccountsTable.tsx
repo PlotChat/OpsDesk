@@ -19,6 +19,8 @@ import { useState } from "react";
 import { useGetRoles } from "../hooks/useRoles";
 import ViewEditAccountDialog from "./ViewEditAccountDialog";
 import { Button } from "@/components/ui/button";
+import { FeatureTableSkeleton } from "@/components/ui/feature-tables/feature-table-skeleton";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Columns that appears in the table
 const accCols = [
@@ -29,6 +31,8 @@ const accCols = [
 ] satisfies DataTableColumn<UserProfile>[];
 
 const AccountsTable = () => {
+	const queryClient = useQueryClient();
+
 	// States and hooks for the table
 	const [currPage, setcurrPage] = useState<number>(1);
 	const [search, setSearch] = useState<string>("");
@@ -37,10 +41,11 @@ const AccountsTable = () => {
 		column: "created_at",
 		isAscending: false,
 	});
-	const { isError, isPending, profiles, totalPages, isPlaceholderData } = useGetProfilesPages({
-		page: currPage,
-		pageSize: 10,
-	});
+	const { isError, isPending, profiles, totalPages, isPlaceholderData, isFetching } =
+		useGetProfilesPages({
+			page: currPage,
+			pageSize: 10,
+		});
 	const { roles } = useGetRoles();
 	const roleNames = roles?.map((r) => r.name);
 
@@ -52,23 +57,44 @@ const AccountsTable = () => {
 		setFilters(updates);
 	};
 
-	if (isPending) return <div>Loading...</div>;
+	if (isPending) {
+		return (
+			<FeatureTableSkeleton
+				title="Accounts"
+				columns={[undefined, undefined, undefined, undefined]}
+				toolbar={["search", "filter", "sort"]}
+				rowActions={1}
+				className="h-170"
+			/>
+		);
+	}
 	if (isError) return <div>Error loading accounts</div>;
 
 	return (
 		<>
-			<FeatureTable>
+			<FeatureTable className="h-170">
 				{/* Table Header */}
 				<FeatureTable.Header>
 					<FeatureTable.Title>Accounts</FeatureTable.Title>
 					<FeatureTable.Actions>
+						{/* Search button */}
 						<FeatureTable.Search value={search} onChange={setSearch}></FeatureTable.Search>
+
+						{/* Filter button */}
 						<AccountsTableFilter
 							filters={filters}
 							handleFiltersChange={handleFiltersChange}
 							roleNames={roleNames}
 						></AccountsTableFilter>
+
+						{/* Sort button */}
 						<FeatureTable.Sort value={sortBy} onChange={setsortBy}></FeatureTable.Sort>
+
+						{/* Reload button */}
+						<FeatureTable.ReloadButton
+							isLoading={isFetching}
+							onClick={() => queryClient.invalidateQueries({ queryKey: ["productsPage"] })}
+						/>
 					</FeatureTable.Actions>
 				</FeatureTable.Header>
 
