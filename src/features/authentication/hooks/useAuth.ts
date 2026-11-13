@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { signIn, signOut } from "../api/authenticate";
+import { signIn, signOut, signUp } from "../api/authenticate";
 
 export function useSignIn() {
 	const signinMutation = useMutation({
@@ -7,6 +7,14 @@ export function useSignIn() {
 	});
 
 	return { signin: signinMutation.mutate, user: signinMutation.data?.user, ...signinMutation };
+}
+
+export function useSignUp() {
+	const signupMutation = useMutation({
+		mutationFn: signUp,
+	});
+
+	return { signup: signupMutation.mutate, user: signupMutation.data?.user, ...signupMutation };
 }
 
 export function useSignOut() {

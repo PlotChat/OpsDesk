@@ -2,7 +2,7 @@ import { Navigate, Outlet, Route, Routes } from "react-router";
 import DashboardMain from "./components/layout/DashboardMain";
 import ProductsTable from "./features/inventory/ui/ProductsTable";
 import OrdersTable from "./features/orders/ui/OrdersTable";
-import { SigninForm, SignupForm } from "./features/authentication/ui/AuthForm";
+import { AuthForm } from "./features/authentication/ui/AuthForm";
 import AuthPage from "./pages/AuthPage";
 import useAuthContext from "./features/authentication/hooks/useAuthContext";
 import DashboardPage from "./pages/DashboardPage";
@@ -22,7 +22,7 @@ const ProtectedRoute = () => {
 	}
 
 	// If they are logged in but not a staff, take them to home
-	if (user && userProfile && !["admin", "staff"].includes(userProfile.role)) {
+	if (user && userProfile && !["admin", "staff"].includes(userProfile.role_name)) {
 		return <Navigate to="/home" />;
 	}
 
@@ -49,11 +49,11 @@ const PublicRoute = () => {
 	// Only hold the screen blank if a session exists and we're waiting on their role
 	if (isLoading) return null;
 
-	if (userProfile?.role === "admin" || userProfile?.role === "staff") {
+	if (userProfile?.role_name === "admin" || userProfile?.role_name === "staff") {
 		return <Navigate to="/dashboard" replace />;
 	}
 
-	if (userProfile?.role === "customer") {
+	if (userProfile?.role_name === "customer") {
 		return <Navigate to="/home" replace />;
 	}
 
@@ -84,8 +84,8 @@ const App = () => {
 			<Route element={<PublicRoute />}>
 				<Route element={<AuthPage />} path="/auth">
 					<Route element={<Navigate to="/auth/signin" />} index></Route>
-					<Route element={<SigninForm />} path={"/auth/signin"}></Route>
-					<Route element={<SignupForm />} path={"/auth/signup"}></Route>
+					<Route element={<AuthForm variant="signin"/>} path={"/auth/signin"}></Route>
+					<Route element={<AuthForm variant="signup" />} path={"/auth/signup"}></Route>
 				</Route>
 			</Route>
 			/* Public routes */

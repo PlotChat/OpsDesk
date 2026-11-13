@@ -11,7 +11,7 @@ export async function signUp({ email, password }: AuthProps) {
 	});
 
 	if (error) {
-		throw new Error("Error signing up.");
+		throw new Error(`Error signing up: ${error.message}`);
 	}
 
 	return data;
@@ -24,7 +24,7 @@ export async function signIn({ email, password }: AuthProps) {
 	});
 
 	if (error) {
-		throw new Error("Error signing up.");
+		throw new Error(`Error signing in: ${error.message}`);
 	}
 
 	return data;

@@ -17,6 +17,8 @@ import { Button } from "../ui/button";
 import { cn } from "cn";
 import logo from "@/assets/logo.svg";
 import { Separator } from "../ui/separator";
+import { MdManageAccounts } from "react-icons/md";
+import useAuthContext from "@/features/authentication/hooks/useAuthContext";
 
 const navItems = [
 	{
@@ -29,11 +31,18 @@ const navItems = [
 		url: "./orders",
 		icon: IoReceiptOutline,
 	},
+	{
+		title: "Accounts",
+		url: "./accounts",
+		icon: MdManageAccounts,
+		isAdmin: true,
+	}
 ];
 
 const Sidebar = () => {
 	const location = useLocation();
 	const { setOpen, openMobile, isMobile } = useSidebar();
+	const {userProfile} = useAuthContext();
 
 	const handleMouseEnter = () => {
 		if (!isMobile) {
@@ -81,6 +90,10 @@ const Sidebar = () => {
 							<SidebarMenu className="mt-2">
 								{navItems.map((item) => {
 									const isActive = location.pathname.includes(item.url.replace("./", ""));
+
+									if(item.isAdmin && userProfile?.role_name !== "admin"){
+										return;
+									}
 
 									return (
 										<SidebarMenuItem key={item.title}>

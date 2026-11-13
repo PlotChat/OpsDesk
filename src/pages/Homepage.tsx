@@ -6,13 +6,15 @@ import { useNavigate } from "react-router";
 
 const Homepage = () => {
 	const navigate = useNavigate();
-	const { user, userProfile, isLoading } = useAuthContext();
+	const { user, userProfile, isLoading, isError } = useAuthContext();
 	const { signOut } = useSignOut();
 
-	const renderAuthorizedLinks = (role: UserProfile["role"]) => {
-		if (role === "admin" || role === "staff") {
+	const renderAuthorizedLinks = (role: UserProfile["role_name"]) => {
+		const cleanRole = role.trim().toLowerCase();
+		
+		if (cleanRole === "admin" || cleanRole === "staff") {
 			return <Button onClick={() => navigate("/dashboard")}>Dashboard</Button>;
-		} else if (role === "customer") {
+		} else if (cleanRole === "customer") {
 			return <Button onClick={() => navigate("/home")}>Home</Button>;
 		}
 	};
@@ -21,7 +23,7 @@ const Homepage = () => {
 		<main className="p-20">
 			<div className="text-3xl mb-10">Home</div>
 			{!user && (
-				<div className="flex">
+				<div className="flex gap-2">
 					<Button variant="outline" onClick={() => navigate("/auth/signin")}>
 						Sign in
 					</Button>
@@ -44,11 +46,11 @@ const Homepage = () => {
 							</Button>
 						</div>}
 					
-                    {!userProfile && !isLoading && (
+                    {isError && (
 						<div className="text-red-500">Error loading your profile</div>
                     )}
 
-					{userProfile && <div className="mt-3">{renderAuthorizedLinks(userProfile.role)}</div>}
+					{userProfile && <div className="mt-3">{renderAuthorizedLinks(userProfile.role_name)}</div>}
 				</div>
 			)}
 		</main>
