@@ -1,19 +1,15 @@
 import { supabase } from "@/lib/supabase";
-import type { Order, OrderFilterType, OrderSortType } from "../types/types";
+import type { Order, OrderFilterType } from "../types/types";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { calcTotalPages, getPageRange } from "@/lib/utils";
-import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/types/tables/table-types";
-export interface OrderPagesProps extends FeatureTablePagesProps{
-	sortBy?: OrderSortType;
-	filterBy?: OrderFilterType;
-}
+import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/components/ui/feature-tables/types";
 
 export async function getOrdersPage({
 	sortBy = { column: "created_at", isAscending: false },
 	filterBy = { customer_name: "" },
 	page,
 	pageSize,
-}: OrderPagesProps): Promise<FeatureTablePagesResponse<Order>> {
+}: FeatureTablePagesProps<Order, OrderFilterType>): Promise<FeatureTablePagesResponse<Order>> {
 	const { from, to } = getPageRange(page, pageSize);
 
 	/* Declare base query */
@@ -36,6 +32,7 @@ export async function getOrdersPage({
 	if (error) {
 		throw new Error("Error when fetching orders");
 	}
+
 
 	return { data, totalPages, count, error };
 }

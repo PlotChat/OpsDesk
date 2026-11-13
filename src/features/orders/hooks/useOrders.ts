@@ -1,10 +1,11 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOrder, getOrdersPage, type OrderPagesProps } from "../api/getOrders.ts";
+import { getOrder, getOrdersPage } from "../api/getOrders.ts";
 import { deleteOrder } from "../api/deleteOrder.ts";
-import type { Order } from "../types/types.ts";
+import type { Order, OrderFilterType } from "../types/types.ts";
 import { formatTimeToDMY } from "@/lib/utils.ts";
+import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types.ts";
 
-export function useGetOrdersPage({ page, pageSize, sortBy, filterBy }: OrderPagesProps) {
+export function useGetOrdersPage({ page, pageSize, sortBy, filterBy }: FeatureTablePagesProps<Order, OrderFilterType>) {
 	const ordersQuery = useQuery({
 		queryKey: ["ordersPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {
