@@ -24,5 +24,6 @@ export type UserProfile = {
 };
 
 export type UserProfileFilterType = {
-	roles: UserProfileRole["name"][] | [];
+	roles: UserProfileRole["id"][];
+	search: string;
 };

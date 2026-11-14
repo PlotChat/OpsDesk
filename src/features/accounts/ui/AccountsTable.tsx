@@ -6,7 +6,9 @@ import {
 	DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
-import FeatureTable from "@/components/ui/feature-tables/feature-table";
+import FeatureTable, {
+	type FeatureTableSortOption,
+} from "@/components/ui/feature-tables/feature-table";
 import { FeatureTablePagination } from "@/components/ui/feature-tables/feature-table-pagination";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
 import { useGetProfilesPages } from "@/features/authentication/hooks/useProfiles";
@@ -21,6 +23,8 @@ import ViewEditAccountDialog from "./ViewEditAccountDialog";
 import { Button } from "@/components/ui/button";
 import { FeatureTableSkeleton } from "@/components/ui/feature-tables/feature-table-skeleton";
 import { useQueryClient } from "@tanstack/react-query";
+import { BsAlphabetUppercase } from "react-icons/bs";
+import { MdAccessTime } from "react-icons/md";
 
 // Columns that appears in the table
 const accCols = [
@@ -30,13 +34,20 @@ const accCols = [
 	{ key: "created_at", label: "Creation Date" },
 ] satisfies DataTableColumn<UserProfile>[];
 
+const accountSortOptions = [
+	{ value: "email", label: "Email", icon: BsAlphabetUppercase },
+	{ value: "full_name", label: "Name", icon: BsAlphabetUppercase },
+	{ value: "role_name", label: "Role", icon: BsAlphabetUppercase },
+	{ value: "created_at", label: "Creation Date", icon: MdAccessTime },
+] satisfies FeatureTableSortOption<UserProfile>[];
+
 const AccountsTable = () => {
 	const queryClient = useQueryClient();
 
 	// States and hooks for the table
 	const [currPage, setcurrPage] = useState<number>(1);
 	const [search, setSearch] = useState<string>("");
-	const [filters, setFilters] = useState<UserProfileFilterType>({ roles: [] });
+	const [filters, setFilters] = useState<UserProfileFilterType>({ roles: [], search: "" });
 	const [sortBy, setsortBy] = useState<FeatureTableSortType<UserProfile>>({
 		column: "created_at",
 		isAscending: false,
@@ -45,9 +56,10 @@ const AccountsTable = () => {
 		useGetProfilesPages({
 			page: currPage,
 			pageSize: 10,
+			sortBy,
+			filterBy: filters,
 		});
 	const { roles } = useGetRoles();
-	const roleNames = roles?.map((r) => r.name);
 
 	// States for the view modal
 	const [currAccId, setCurrAccId] = useState<UserProfile["id"] | null>(null);
@@ -55,6 +67,12 @@ const AccountsTable = () => {
 	// Handler functions for the table
 	const handleFiltersChange = (updates: UserProfileFilterType) => {
 		setFilters(updates);
+		setcurrPage(1);
+	};
+
+	const handleSortChange = (updates: FeatureTableSortType<UserProfile>) => {
+		setsortBy(updates);
+		setcurrPage(1);
 	};
 
 	if (isPending) {
@@ -78,22 +96,33 @@ const AccountsTable = () => {
 					<FeatureTable.Title>Accounts</FeatureTable.Title>
 					<FeatureTable.Actions>
 						{/* Search button */}
-						<FeatureTable.Search value={search} onChange={setSearch}></FeatureTable.Search>
+						<FeatureTable.Search
+							value={search}
+							onChange={(value) => {
+								setSearch(value);
+								setFilters((currentFilters) => ({ ...currentFilters, search: value }));
+								setcurrPage(1);
+							}}
+						></FeatureTable.Search>
 
 						{/* Filter button */}
 						<AccountsTableFilter
 							filters={filters}
 							handleFiltersChange={handleFiltersChange}
-							roleNames={roleNames}
+							roles={roles ?? []}
 						></AccountsTableFilter>
 
 						{/* Sort button */}
-						<FeatureTable.Sort value={sortBy} onChange={setsortBy}></FeatureTable.Sort>
+						<FeatureTable.Sort
+							value={sortBy}
+							onChange={handleSortChange}
+							options={accountSortOptions}
+						></FeatureTable.Sort>
 
 						{/* Reload button */}
 						<FeatureTable.ReloadButton
 							isLoading={isFetching}
-							onClick={() => queryClient.invalidateQueries({ queryKey: ["productsPage"] })}
+							onClick={() => queryClient.invalidateQueries({ queryKey: ["profilesPage"] })}
 						/>
 					</FeatureTable.Actions>
 				</FeatureTable.Header>
@@ -135,7 +164,7 @@ export default AccountsTable;
 
 // The filter dropdown in the table
 interface AccountsTableFilterProps {
-	roleNames: UserProfileRole["name"][];
+	roles: UserProfileRole[];
 	filters: UserProfileFilterType;
 	handleFiltersChange: (updates: UserProfileFilterType) => void;
 }
@@ -143,35 +172,37 @@ interface AccountsTableFilterProps {
 const AccountsTableFilter = ({
 	filters,
 	handleFiltersChange,
-	roleNames,
+	roles,
 }: AccountsTableFilterProps) => {
 	return (
 		<FeatureTable.Filter triggerText="Filter">
 			<DropdownMenuSub>
 				<DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
 				<DropdownMenuSubContent>
-					{roleNames && (
+					{roles.length > 0 && (
 						<DropdownMenuGroup>
-							{roleNames.map((r) => (
-								<DropdownMenuCheckboxItem
-									key={r}
-									onCheckedChange={() => {
-										const found = filters.roles.find((role) => role === r);
+							{roles.map((role) => {
+								const isSelected = filters.roles.includes(role.id);
 
-										if (!found) {
-											handleFiltersChange({ ...filters, roles: [...filters.roles, r] });
-										} else {
-											handleFiltersChange({
-												...filters,
-												roles: filters.roles.filter((role) => role !== found),
-											});
-										}
-									}}
-									checked={filters.roles.find((role) => role === r) ? true : false}
-								>
-									{r}
-								</DropdownMenuCheckboxItem>
-							))}
+								return (
+									<DropdownMenuCheckboxItem
+										key={role.id}
+										onCheckedChange={() => {
+											if (!isSelected) {
+												handleFiltersChange({ ...filters, roles: [...filters.roles, role.id] });
+											} else {
+												handleFiltersChange({
+													...filters,
+													roles: filters.roles.filter((roleId) => roleId !== role.id),
+												});
+											}
+										}}
+										checked={isSelected}
+									>
+										{role.name}
+									</DropdownMenuCheckboxItem>
+								);
+							})}
 						</DropdownMenuGroup>
 					)}
 				</DropdownMenuSubContent>

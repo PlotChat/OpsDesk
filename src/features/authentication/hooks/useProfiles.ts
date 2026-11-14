@@ -1,14 +1,19 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProfileByUserId, getProfilesPages } from "../api/getProfiles";
-import type { UserProfile } from "../types/ProfileType";
+import type { UserProfile, UserProfileFilterType } from "../types/ProfileType";
 import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types";
 import { updateProfile, type updateProfileProps } from "../api/updateProfile";
 import useAuthContext from "./useAuthContext";
 
-export const useGetProfilesPages = ({ page, pageSize }: FeatureTablePagesProps<UserProfile>) => {
+export const useGetProfilesPages = ({
+	page,
+	pageSize,
+	sortBy,
+	filterBy,
+}: FeatureTablePagesProps<UserProfile, UserProfileFilterType>) => {
 	const profilesQuery = useQuery({
-		queryKey: ["profilesPage", page, pageSize],
-		queryFn: () => getProfilesPages({ page, pageSize }),
+		queryKey: ["profilesPage", page, pageSize, sortBy, filterBy],
+		queryFn: () => getProfilesPages({ page, pageSize, sortBy, filterBy }),
 		placeholderData: keepPreviousData,
 	});
 

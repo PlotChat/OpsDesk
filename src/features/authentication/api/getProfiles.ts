@@ -5,6 +5,7 @@ import type {
 	FeatureTablePagesProps,
 	FeatureTablePagesResponse,
 } from "@/components/ui/feature-tables/types";
+import type { UserProfileFilterType } from "../types/ProfileType";
 
 export async function getProfileByUserId({ id }: { id: UserProfile["id"] }) {
 	const { data, error } = await supabase
@@ -33,12 +34,37 @@ export async function getProfileByUserId({ id }: { id: UserProfile["id"] }) {
 export async function getProfilesPages({
 	page,
 	pageSize = 10,
-}: FeatureTablePagesProps<UserProfile>): Promise<FeatureTablePagesResponse<UserProfile>> {
+	sortBy = { column: "created_at", isAscending: false },
+	filterBy = { roles: [], search: "" },
+}: FeatureTablePagesProps<UserProfile, UserProfileFilterType>): Promise<
+	FeatureTablePagesResponse<UserProfile>
+> {
 	const { from, to } = getPageRange(page, pageSize);
 
-	const { data, error, count } = await supabase
+	let query = supabase
 		.from("profiles")
-		.select("*, roles(id, name)", { count: "exact" })
+		.select("*, roles(id, name)", { count: "exact" });
+
+	const searchTerm = filterBy.search.trim();
+	if (searchTerm) {
+		query = query.or(`email.ilike.%${searchTerm}%,full_name.ilike.%${searchTerm}%`);
+	}
+
+	if (filterBy.roles.length > 0) {
+		query = query.in("role_id", filterBy.roles);
+	}
+
+	if (sortBy.column === "role_name") {
+		query = query.order("name", {
+			ascending: sortBy.isAscending,
+			referencedTable: "roles",
+		});
+	} else {
+		query = query.order(sortBy.column, { ascending: sortBy.isAscending });
+	}
+
+	const { data, error, count } = await query
+		.order("id", { ascending: true })
 		.range(from, to);
 
 	if (error) {
