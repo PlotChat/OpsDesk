@@ -32,7 +32,7 @@ export interface FeatureTableProps extends React.ComponentProps<"section"> {
 
 function FeatureTable({ children, className, ...props }: FeatureTableProps) {
 	return (
-		<section className={cn(className, "min-h-120 w-full flex flex-col")} {...props}>
+		<section className={cn(className, "w-full flex flex-col")} {...props}>
 			{children}
 		</section>
 	);
