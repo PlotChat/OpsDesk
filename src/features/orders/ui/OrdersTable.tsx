@@ -13,10 +13,11 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { MdAccessTime } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
+import { formatCurrency } from "@/lib/utils";
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name" },
-	{ key: "total_amount", label: "Total" },
+	{ key: "total_amount", label: "Total", renderElements: (row) => formatCurrency(row.total_amount) },
 	{ key: "created_at", label: "Created at" },
 	{
 		key: "status",

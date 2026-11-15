@@ -20,6 +20,7 @@ import { BsAlphabetUppercase } from "react-icons/bs";
 import { IoPricetagsOutline } from "react-icons/io5";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
 import { cn } from "cn";
+import { formatCurrency } from "@/lib/utils";
 
 export const ProductsTable = ({className}: {className: string}) => {
 	const pageSize = 10;
@@ -73,7 +74,7 @@ export const ProductsTable = ({className}: {className: string}) => {
 	const productColumns = [
 		{ key: "sku", label: "SKU", width: "md", truncate: true },
 		{ key: "name", label: "Name", width: "xl", truncate: true },
-		{ key: "price", label: "Price" },
+		{ key: "price", label: "Price", renderElements: (row) => formatCurrency(row.price) },
 		{ key: "created_at", label: "Created at" },
 	] satisfies DataTableColumn<Product>[];
 

@@ -6,11 +6,18 @@ import { Button } from "@/components/ui/button";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
 import { useState } from "react";
 import { cn } from "cn";
+import { formatCurrency } from "@/lib/utils";
 
 const columns: DataTableColumn<TopSellingProduct>[] = [
 	{ key: "index", label: "#" },
 	{ key: "name", label: "Name" },
-	{ key: "total_revenue", label: "Revenue", align: "center", width: "md" },
+	{
+		key: "total_revenue",
+		label: "Revenue",
+		align: "center",
+		width: "md",
+		renderElements: (row) => formatCurrency(row.total_revenue),
+	},
 	{ key: "order_count", label: "Orders", align: "center", width: "sm" },
 ];
 

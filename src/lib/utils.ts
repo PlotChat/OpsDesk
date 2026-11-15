@@ -1,5 +1,17 @@
 export { cn } from "cn";
 
+const currencyFormatter = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+});
+
+export const formatCurrency = (value: number | string | null | undefined) => {
+	if (value === null || value === undefined || value === "") return "—";
+
+	const amount = Number(value);
+	return Number.isFinite(amount) ? currencyFormatter.format(amount) : "—";
+};
+
 export const formatTimeToDMY = (dateString: string) => {
 	return new Date(dateString).toLocaleDateString("en-GB");
 };
