@@ -1,12 +1,22 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProduct, getProductsPage } from "../api/getProducts";
+import {
+	getProduct,
+	getProductsPage,
+	getTopSellingProducts,
+	type getTopSellingProductsProps,
+} from "../api/getProducts";
 import { deleteProduct } from "../api/deleteProduct";
 import { createProduct } from "../api/createProduct";
 import { editProduct } from "../api/editProduct";
 import type { Product, ProductFilterType } from "../types/types";
 import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types";
 
-export function useGetProductsPage({ page, pageSize, sortBy, filterBy }: FeatureTablePagesProps<Product, ProductFilterType>) {
+export function useGetProductsPage({
+	page,
+	pageSize,
+	sortBy,
+	filterBy,
+}: FeatureTablePagesProps<Product, ProductFilterType>) {
 	const productsQuery = useQuery({
 		queryKey: ["productsPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {
@@ -84,4 +94,16 @@ export function useEditProduct() {
 	});
 
 	return editMutation;
+}
+
+export function useGetTopSellingProducts({ amount, daysBack }: getTopSellingProductsProps) {
+	const query = useQuery({
+		queryKey: ["productsTopSelling", amount, daysBack],
+		queryFn: async () => {
+			await new Promise((resolve) => setTimeout(resolve, 500))
+			return getTopSellingProducts({ amount, daysBack });
+		},
+	});
+
+	return { topSellingProducts: query.data, ...query };
 }

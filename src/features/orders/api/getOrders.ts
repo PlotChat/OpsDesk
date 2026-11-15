@@ -51,3 +51,25 @@ export async function getOrder({ id }: { id: string }): Promise<OrderResponse> {
 
 	return { data, error };
 }
+
+export type OrderChartPoint = {
+	date: string;
+	revenue: number;
+	orders: number;
+};
+
+export async function getOrderChartStats(daysBack = 365): Promise<OrderChartPoint[]> {
+	const { data, error } = await supabase.rpc("get_order_chart_stats", {
+		days_back: daysBack,
+	});
+
+	if (error) {
+		throw new Error("Failed to load order analytics");
+	}
+
+	return (data ?? []).map((row: OrderChartPoint) => ({
+		date: row.date,
+		revenue: Number(row.revenue),
+		orders: Number(row.orders),
+	}));
+}

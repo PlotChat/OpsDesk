@@ -19,8 +19,9 @@ import { MdAccessTime, MdOutlineCategory } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import { IoPricetagsOutline } from "react-icons/io5";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
+import { cn } from "cn";
 
-export const ProductsTable = () => {
+export const ProductsTable = ({className}: {className: string}) => {
 	const pageSize = 10;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isViewCreateModal, setIsViewCreateModal] = useState<boolean>(false);
@@ -84,7 +85,7 @@ export const ProductsTable = () => {
 	] satisfies FeatureTableSortOption<Product>[];
 
 	return (
-		<div className="mx-auto flex flex-col justify-between">
+		<div className={cn("mx-auto flex flex-col justify-between", className)}>
 			{/* The products table */}
 			<FeatureTable className="h-170">
 				<FeatureTable.Header>

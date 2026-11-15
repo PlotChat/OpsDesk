@@ -6,7 +6,7 @@ const DashboardPage = ({ className }: { className?: string }) => {
 		<div
 			className={cn(
 				className,
-				"[ min-w-75 w-[95%] max-w-300 ] [ px-2 py-8 md:px-10 md:py-11 mx-auto ]",
+				"[ min-w-75 w-[95%] max-w-300 ] [ space-y-5 px-2 py-8 md:px-10 md:py-11 mx-auto ]",
 			)}
 		>
 			<Outlet></Outlet>

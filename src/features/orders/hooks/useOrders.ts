@@ -1,4 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getOrderChartStats } from "../api/getOrders";
 import { getOrder, getOrdersPage } from "../api/getOrders.ts";
 import { deleteOrder } from "../api/deleteOrder.ts";
 import type { Order, OrderFilterType } from "../types/types.ts";
@@ -56,4 +57,12 @@ export function useDeleteOrder() {
 	});
 
 	return { deleteOrder: ordersMutation.mutate, isDeleting: ordersMutation.isPending };
+}
+
+export function useOrderChartStats(daysBack = 365) {
+	return useQuery({
+		queryKey: ["order-chart-stats", daysBack],
+		queryFn: () => getOrderChartStats(daysBack),
+		staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+	});
 }

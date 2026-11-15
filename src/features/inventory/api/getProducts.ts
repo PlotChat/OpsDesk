@@ -5,17 +5,23 @@ import type {
 	ProductCategoryJunction,
 	ProductFilterType,
 	RawProduct,
+	TopSellingProduct,
 } from "../types/types";
 import { calcTotalPages, formatTimeToDMY, getPageRange } from "@/lib/utils";
-import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/components/ui/feature-tables/types";
+import type {
+	FeatureTablePagesProps,
+	FeatureTablePagesResponse,
+} from "@/components/ui/feature-tables/types";
 
 export async function getProductsPage({
 	sortBy = { column: "created_at", isAscending: false },
 	filterBy = { categories: [], minPrice: 0, maxPrice: Number.MAX_VALUE, search: "" },
 	page,
 	pageSize,
-}: FeatureTablePagesProps<Product, ProductFilterType>): Promise<FeatureTablePagesResponse<Product>> {
-	const {from, to} = getPageRange(page, pageSize);
+}: FeatureTablePagesProps<Product, ProductFilterType>): Promise<
+	FeatureTablePagesResponse<Product>
+> {
+	const { from, to } = getPageRange(page, pageSize);
 
 	// Conditionally apply the !inner join ONLY when we are filtering by categories.
 	// This forces supabase to filter out the Products themselves, not just their nested categories.
@@ -29,7 +35,9 @@ export async function getProductsPage({
 
 	// Filter by filterable columns
 	if (filterBy) {
-		const searchTerm = filterBy.search?.trim() || (filterBy.name && filterBy.name === filterBy.sku ? filterBy.name.trim() : null);
+		const searchTerm =
+			filterBy.search?.trim() ||
+			(filterBy.name && filterBy.name === filterBy.sku ? filterBy.name.trim() : null);
 
 		if (searchTerm) {
 			query = query.or(`name.ilike.%${searchTerm}%,sku.ilike.%${searchTerm}%`);
@@ -109,4 +117,26 @@ export async function getProduct({ id }: { id: string }): Promise<Product> {
 		categories: flatCategories,
 		category_name: categoryName || "Uncategorized",
 	};
+}
+
+export interface getTopSellingProductsProps {
+	amount: number;
+	daysBack: number;
+}
+
+export async function getTopSellingProducts({ amount, daysBack }: getTopSellingProductsProps) {
+	const { data, error } = await supabase.rpc("get_most_ordered_products", {days_back: daysBack}).range(0, amount - 1);
+
+	if (error) {
+		throw new Error("Error fetching top selling products");
+	}
+
+	if (!data) return [];
+
+	const formattedData = data.map((d: TopSellingProduct) => ({
+		...d,
+		created_at: formatTimeToDMY(d.created_at.toString()),
+	}));
+
+	return formattedData as TopSellingProduct[];
 }

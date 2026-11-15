@@ -31,6 +31,21 @@ export interface RawProduct {
 	category_name?: string;
 }
 
+// Type for top selling products
+export interface TopSellingProduct extends Product{
+	index: number;
+	total_ordered: number;
+	order_count: number;
+	total_revenue: number;
+}
+
+// Type for revenue when calulating for revenue by categories
+export interface RevenueCategory extends Category{
+	revenue: number,
+	units_sold: number,
+	order_count: number
+}
+
 export type ProductDbColumns = keyof Pick<Product, "id" | "name" | "price" | "created_at">;
 
 export type ProductFilterType = {

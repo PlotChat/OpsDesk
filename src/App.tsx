@@ -9,6 +9,9 @@ import DashboardPage from "./pages/DashboardPage";
 import Homepage from "./pages/Homepage";
 import ProfilePage from "./pages/ProfilePage";
 import AccountsTable from "./features/accounts/ui/AccountsTable";
+import OrdersAreaChart from "./features/orders/ui/OrdersAreaChart";
+import ProductsTierTable from "./features/inventory/ui/ProductsTierTable";
+import ProductCategoriesPieChart from "./features/inventory/ui/ProductCategoriesPieChart";
 
 // Only staff routing
 const ProtectedRoute = () => {
@@ -70,8 +73,27 @@ const App = () => {
 					<Route element={<DashboardPage />}>
 						<Route element={<Navigate to="/dashboard/products" />} index></Route>
 						<Route element={<div>404 Not Found</div>} path="*"></Route>
-						<Route element={<ProductsTable></ProductsTable>} path="/dashboard/products"></Route>
-						<Route element={<OrdersTable></OrdersTable>} path="/dashboard/orders"></Route>
+						<Route
+							element={
+								<>
+									<div className="flex gap-10">
+										<ProductsTierTable className="flex-3"></ProductsTierTable>
+										<ProductCategoriesPieChart className="flex-2"></ProductCategoriesPieChart>
+									</div>
+									<ProductsTable className="mt-12"></ProductsTable>
+								</>
+							}
+							path="/dashboard/products"
+						></Route>
+						<Route
+							element={
+								<>
+									<OrdersAreaChart />
+									<OrdersTable />
+								</>
+							}
+							path="/dashboard/orders"
+						></Route>
 						<Route element={<AccountsTable></AccountsTable>} path="/dashboard/accounts"></Route>
 					</Route>
 				</Route>
@@ -84,7 +106,7 @@ const App = () => {
 			<Route element={<PublicRoute />}>
 				<Route element={<AuthPage />} path="/auth">
 					<Route element={<Navigate to="/auth/signin" />} index></Route>
-					<Route element={<AuthForm variant="signin"/>} path={"/auth/signin"}></Route>
+					<Route element={<AuthForm variant="signin" />} path={"/auth/signin"}></Route>
 					<Route element={<AuthForm variant="signup" />} path={"/auth/signup"}></Route>
 				</Route>
 			</Route>
