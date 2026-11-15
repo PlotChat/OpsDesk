@@ -21,7 +21,6 @@ import { useState } from "react";
 import { useGetRoles } from "../hooks/useRoles";
 import ViewEditAccountDialog from "./ViewEditAccountDialog";
 import { Button } from "@/components/ui/button";
-import { FeatureTableSkeleton } from "@/components/ui/feature-tables/feature-table-skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import { MdAccessTime } from "react-icons/md";
@@ -75,17 +74,6 @@ const AccountsTable = () => {
 		setcurrPage(1);
 	};
 
-	if (isPending) {
-		return (
-			<FeatureTableSkeleton
-				title="Accounts"
-				columns={[undefined, undefined, undefined, undefined]}
-				toolbar={["search", "filter", "sort"]}
-				rowActions={1}
-				className="h-170"
-			/>
-		);
-	}
 	if (isError) return <div>Error loading accounts</div>;
 
 	return (
@@ -132,7 +120,7 @@ const AccountsTable = () => {
 					data={profiles}
 					rowKey={"id"}
 					columns={accCols}
-					isLoading={isPlaceholderData}
+					isLoading={isPending || isPlaceholderData}
 					renderFeatureActions={(row: UserProfile) => {
 						return (
 							<AccountsTableActions row={row} setCurrAccId={setCurrAccId}></AccountsTableActions>

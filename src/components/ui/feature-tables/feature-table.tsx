@@ -308,6 +308,8 @@ function FeatureTableContent<T>({
 	columns,
 	rowKey,
 	isLoading,
+	loadingRowCount,
+	loadingRowActions,
 	className,
 	isTableFixed = true,
 	renderFeatureActions,
@@ -320,6 +322,8 @@ function FeatureTableContent<T>({
 				rowKey={rowKey}
 				className={className}
 				isLoading={isLoading}
+				loadingRowCount={loadingRowCount}
+				loadingRowActions={loadingRowActions}
 				isTableFixed={isTableFixed}
 				renderFeatureActions={renderFeatureActions}
 			/>

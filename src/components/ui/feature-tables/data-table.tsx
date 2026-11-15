@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils"; // Make sure your cn import is correct
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table";
 import { CgSpinnerAlt } from "react-icons/cg";
+import { FeatureTableSkeleton } from "./feature-table-skeleton";
 
 export interface DataTableColumn<T> {
 	truncate?: boolean;
@@ -18,6 +19,8 @@ export interface DataTableProps<T> {
 	rowKey: keyof T | ((row: T) => string | number);
 	footerTotal?: string;
 	isLoading?: boolean;
+	loadingRowCount?: number;
+	loadingRowActions?: 0 | 1 | 2;
 	isTableFixed?: boolean;
 	className?: string;
 	renderFeatureActions?: (row: T) => React.ReactNode;
@@ -26,6 +29,7 @@ export interface DataTableProps<T> {
 function getCellStyles<T>(col: DataTableColumn<T>, isHeader = false) {
 	return cn(
 		{ "text-right": col.align === "right" },
+		{ "text-center": col.align === "center" },
 		{
 			"w-12": col.width === "xs",
 			"w-32": col.width === "sm",
@@ -42,15 +46,18 @@ export function DataTable<T>({
 	columns,
 	rowKey,
 	isLoading,
+	renderFeatureActions,
+	loadingRowCount = 10,
+	loadingRowActions = renderFeatureActions ? 1 : 0,
 	className,
 	isTableFixed,
-	renderFeatureActions,
 }: DataTableProps<T>) {
 	return (
 		<div className="relative flex flex-col">
-			{/* Only render when there is data */}
-			{data.length > 0 && (
+			{/* Keep the real column headers visible while the initial rows load. */}
+			{(data.length > 0 || isLoading) && (
 				<Table
+					aria-busy={isLoading || undefined}
 					className={cn(
 						className,
 						isLoading && data.length > 0 && "opacity-50",
@@ -68,26 +75,34 @@ export function DataTable<T>({
 						</TableRow>
 					</TableHeader>
 
-					<TableBody>
-						{data.map((row) => {
-							const uniqueKey = typeof rowKey === "function" ? rowKey(row) : String(row[rowKey]);
-							return (
-								<TableRow key={uniqueKey}>
-									{columns.map((col) => (
-										<TableCell
-											key={String(col.key)}
-											className={cn(getCellStyles(col, false), col.getColumnStyles?.(row))}
-										>
-											{col.renderElements ? col.renderElements(row) : String(row[col.key])}
-										</TableCell>
-									))}
-									{renderFeatureActions && (
-										<TableCell className="text-center">{renderFeatureActions(row)}</TableCell>
-									)}
-								</TableRow>
-							);
-						})}
-					</TableBody>
+					{data.length > 0 ? (
+						<TableBody>
+							{data.map((row) => {
+								const uniqueKey = typeof rowKey === "function" ? rowKey(row) : String(row[rowKey]);
+								return (
+									<TableRow key={uniqueKey}>
+										{columns.map((col) => (
+											<TableCell
+												key={String(col.key)}
+												className={cn(getCellStyles(col, false), col.getColumnStyles?.(row))}
+											>
+												{col.renderElements ? col.renderElements(row) : String(row[col.key])}
+											</TableCell>
+										))}
+										{renderFeatureActions && (
+											<TableCell className="text-center">{renderFeatureActions(row)}</TableCell>
+										)}
+									</TableRow>
+								);
+							})}
+						</TableBody>
+					) : (
+						<FeatureTableSkeleton
+							columnCount={columns.length}
+							rowActions={loadingRowActions}
+							rowCount={loadingRowCount}
+						/>
+					)}
 				</Table>
 			)}
 

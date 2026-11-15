@@ -19,7 +19,6 @@ import { MdAccessTime, MdOutlineCategory } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import { IoPricetagsOutline } from "react-icons/io5";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
-import { FeatureTableSkeleton } from "@/components/ui/feature-tables/feature-table-skeleton";
 
 export const ProductsTable = () => {
 	const pageSize = 10;
@@ -68,17 +67,6 @@ export const ProductsTable = () => {
 	// To close the modal we make this null (according to conditionals at the end of this component)
 	const [currProductId, setCurrProductId] = useState<Product["id"]>("");
 
-	if (isPending) {
-		return (
-			<FeatureTableSkeleton
-				title="Products"
-				columns={["md", "xl", undefined, undefined]}
-				toolbar={["search", "filter", "sort", "add", "reload"]}
-				rowActions={2}
-				className="mx-auto h-170 flex flex-col justify-between"
-			/>
-		);
-	}
 	if (isError) return <div>Error: {error.message}</div>;
 
 	const productColumns = [
@@ -165,7 +153,8 @@ export const ProductsTable = () => {
 				<FeatureTable.Content
 					data={products}
 					columns={productColumns}
-					isLoading={isPlaceholderData}
+					isLoading={isPending || isPlaceholderData}
+					loadingRowActions={2}
 					className="h-full"
 					rowKey={"id"}
 					renderFeatureActions={(row: Product) => (

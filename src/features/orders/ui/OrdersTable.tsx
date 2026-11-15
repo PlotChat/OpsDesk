@@ -13,7 +13,6 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { MdAccessTime } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
-import { FeatureTableSkeleton } from "@/components/ui/feature-tables/feature-table-skeleton";
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name" },
@@ -79,17 +78,6 @@ const OrdersTable = () => {
 		setCurrPage(1);
 	};
 
-	if (isPending) {
-		return (
-			<FeatureTableSkeleton
-				title="Orders"
-				columns={[undefined, undefined, undefined, undefined]}
-				toolbar={["search", "sort", "reload"]}
-				rowActions={1}
-				className="mx-auto h-170 flex flex-col justify-between"
-			/>
-		);
-	}
 	if (isError) {
 		return <div>{error.message}</div>;
 	}
@@ -132,7 +120,7 @@ const OrdersTable = () => {
 				<FeatureTable.Content
 					data={orders}
 					columns={orderColumns}
-					isLoading={isPlaceholderData}
+					isLoading={isPending || isPlaceholderData}
 					isTableFixed={true}
 					rowKey={"id"}
 					className="h-full"
