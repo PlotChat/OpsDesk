@@ -76,9 +76,9 @@ const App = () => {
 						<Route
 							element={
 								<>
-									<div className="flex gap-10">
-										<ProductsTierTable className="flex-3"></ProductsTierTable>
-										<ProductCategoriesPieChart className="flex-2"></ProductCategoriesPieChart>
+									<div className="flex flex-col gap-10 lg:flex-row">
+										<ProductsTierTable className="lg:flex-3"></ProductsTierTable>
+										<ProductCategoriesPieChart className="lg:flex-2 mt-10 md:mt-0"></ProductCategoriesPieChart>
 									</div>
 									<ProductsTable className="mt-12"></ProductsTable>
 								</>
