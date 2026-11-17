@@ -1,5 +1,7 @@
 import { type DataTableColumn } from "@/components/ui/feature-tables/data-table";
-import FeatureTable, { type FeatureTableSortOption } from "@/components/ui/feature-tables/feature-table";
+import FeatureTable, {
+	type FeatureTableSortOption,
+} from "@/components/ui/feature-tables/feature-table";
 import { toast } from "@/components/ui/toast";
 import type { Product, ProductFilterType } from "../types/types";
 import { useDeleteProduct, useGetProductsPage } from "../hooks/useProducts";
@@ -21,13 +23,31 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
 import { cn } from "cn";
 import { formatCurrency } from "@/lib/utils";
+import { useDebounce } from "@/hooks/use-debounce";
 
-export const ProductsTable = ({className}: {className: string}) => {
+// Table's columns
+const productColumns = [
+	{ key: "sku", label: "SKU", width: "md", truncate: true },
+	{ key: "name", label: "Name", width: "xl", truncate: true },
+	{ key: "price", label: "Price", renderElements: (row) => formatCurrency(row.price) },
+	{ key: "created_at", label: "Created at" },
+] satisfies DataTableColumn<Product>[];
+
+// Options directly map to real database column names
+const sortOptions = [
+	{ value: "name", label: "Alphabet", icon: BsAlphabetUppercase },
+	{ value: "price", label: "Price", icon: IoPricetagsOutline },
+	{ value: "created_at", label: "Date", icon: MdAccessTime },
+] satisfies FeatureTableSortOption<Product>[];
+
+export const ProductsTable = ({ className }: { className: string }) => {
+	// Simple page states
 	const pageSize = 10;
 	const [currentPage, setCurrentPage] = useState(1);
 	const [isViewCreateModal, setIsViewCreateModal] = useState<boolean>(false);
+	const [currProductId, setCurrProductId] = useState<Product["id"]>("");
 
-	// Standardized sort state matching OrdersTable
+	// Sort and Filter states
 	const [sortBy, setSortBy] = useState<FeatureTableSortType<Product>>({
 		column: "created_at",
 		isAscending: false,
@@ -40,12 +60,20 @@ export const ProductsTable = ({className}: {className: string}) => {
 		search: "",
 	});
 
-	const queryClient = useQueryClient();
-	const { categories } = useGetCategories();
+	// Search states
+	const [searchInput, setSearchInput] = useState("");
+	const debouncedSearch = useDebounce({
+		value: searchInput,
+		delay: 300,
+		onDebounce: () => setCurrentPage(1),
+	});
 
-	const handleFiltersChange = (newFilters: ProductFilterType) => {
-		if (!newFilters) return;
+	// Handlers
+	const handleSearchChange = (value: string) => {
+		setSearchInput(value);
+	};
 
+	const handleFiltersChange = (newFilters: Omit<ProductFilterType, "search">) => {
 		setFilters(newFilters);
 		setCurrentPage(1);
 	};
@@ -57,33 +85,19 @@ export const ProductsTable = ({className}: {className: string}) => {
 		setCurrentPage(1);
 	};
 
+	// Queries
+	const queryClient = useQueryClient();
 	const { products, totalPages, isPending, isFetching, isPlaceholderData, isError, error } =
 		useGetProductsPage({
 			page: currentPage,
 			pageSize,
 			sortBy,
-			filterBy: filters,
+			filterBy: { ...filters, search: debouncedSearch },
 		});
 
-	// View product: When a product id is selected through actions in the table, a modal will appear.
-	// To close the modal we make this null (according to conditionals at the end of this component)
-	const [currProductId, setCurrProductId] = useState<Product["id"]>("");
+	const { categories } = useGetCategories();
 
 	if (isError) return <div>Error: {error.message}</div>;
-
-	const productColumns = [
-		{ key: "sku", label: "SKU", width: "md", truncate: true },
-		{ key: "name", label: "Name", width: "xl", truncate: true },
-		{ key: "price", label: "Price", renderElements: (row) => formatCurrency(row.price) },
-		{ key: "created_at", label: "Created at" },
-	] satisfies DataTableColumn<Product>[];
-
-	// Options directly map to real database column names
-	const sortOptions = [
-		{ value: "name", label: "Alphabet", icon: BsAlphabetUppercase },
-		{ value: "price", label: "Price", icon: IoPricetagsOutline },
-		{ value: "created_at", label: "Date", icon: MdAccessTime },
-	] satisfies FeatureTableSortOption<Product>[];
 
 	return (
 		<div className={cn("mx-auto flex flex-col justify-between", className)}>
@@ -96,13 +110,8 @@ export const ProductsTable = ({className}: {className: string}) => {
 						{/* Search input - searches both name and SKU via Supabase .or() */}
 						<FeatureTable.Search
 							placeholder="Name or SKU..."
-							value={filters.search}
-							onChange={(value) =>
-								handleFiltersChange({
-									...filters,
-									search: value,
-								})
-							}
+							value={searchInput}
+							onChange={handleSearchChange}
 						/>
 
 						{/* Filter dropdown - compares categories by id instead of object reference */}

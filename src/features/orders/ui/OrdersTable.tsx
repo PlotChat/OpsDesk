@@ -4,7 +4,7 @@ import FeatureTable, {
 	type FeatureTableSortOption,
 } from "@/components/ui/feature-tables/feature-table";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
-import { type Order, type OrderFilterType, type OrderSortType } from "../types/types";
+import { type Order, type OrderSortType } from "../types/types";
 import { Button } from "@/components/ui/button";
 import ViewOrderDialog from "./ViewHandleOrderDialog";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,10 +14,15 @@ import { MdAccessTime } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
 import { formatCurrency } from "@/lib/utils";
+import { useDebounce } from "@/hooks/use-debounce";
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name" },
-	{ key: "total_amount", label: "Total", renderElements: (row) => formatCurrency(row.total_amount) },
+	{
+		key: "total_amount",
+		label: "Total",
+		renderElements: (row) => formatCurrency(row.total_amount),
+	},
 	{ key: "created_at", label: "Created at" },
 	{
 		key: "status",
@@ -48,28 +53,25 @@ const orderSortOptions = [
 ] satisfies FeatureTableSortOption<Order>[];
 
 const OrdersTable = () => {
+	// Simple table states
 	const [currOrderId, setCurrOrderId] = useState<Order["id"]>("");
 	const [currPage, setCurrPage] = useState<number>(1);
 	const [sortBy, setSortBy] = useState<FeatureTableSortType<Order>>({
 		column: "created_at",
 		isAscending: false,
 	});
-	const [filterBy, setFilterBy] = useState<OrderFilterType>({ customer_name: "" });
 
-	const queryClient = useQueryClient();
-	const { orders, totalPages, isPlaceholderData, isFetching, isPending, isError, error } =
-		useGetOrdersPage({
-			page: currPage,
-			pageSize: 10,
-			filterBy,
-			sortBy,
-		});
+	// Search states and debouncer
+	const [searchInput, setSearchInput] = useState("");
+	const debouncedSearch = useDebounce({
+		value: searchInput,
+		delay: 300,
+		onDebounce: () => setCurrPage(1),
+	});
 
-	const handleFilterBy = (filters: OrderFilterType) => {
-		if (!filters) return;
-
-		setFilterBy(filters);
-		setCurrPage(1);
+	// Handlers
+	const handleSearchChange = (value: string) => {
+		setSearchInput(value);
 	};
 
 	const handleSortBy = (sorts: OrderSortType) => {
@@ -78,6 +80,16 @@ const OrdersTable = () => {
 		setSortBy(sorts);
 		setCurrPage(1);
 	};
+
+	// Queries
+	const queryClient = useQueryClient();
+	const { orders, totalPages, isPlaceholderData, isFetching, isPending, isError, error } =
+		useGetOrdersPage({
+			page: currPage,
+			pageSize: 10,
+			filterBy: { search: debouncedSearch },
+			sortBy,
+		});
 
 	if (isError) {
 		return <div>{error.message}</div>;
@@ -93,20 +105,14 @@ const OrdersTable = () => {
 						{/* Search input */}
 						<FeatureTable.Search
 							placeholder="Customer name..."
-							onChange={(value) =>
-								handleFilterBy({
-									...filterBy,
-									customer_name: value,
-								})
-							}
+							value={searchInput}
+							onChange={handleSearchChange}
 						/>
 
 						{/* Sort dropdown */}
 						<FeatureTable.Sort
 							value={sortBy}
-							onChange={(sort) =>
-								handleSortBy(sort)
-							}
+							onChange={(sort) => handleSortBy(sort)}
 							options={orderSortOptions}
 						/>
 

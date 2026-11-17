@@ -6,7 +6,7 @@ import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/compon
 
 export async function getOrdersPage({
 	sortBy = { column: "created_at", isAscending: false },
-	filterBy = { customer_name: "" },
+	filterBy = { search: "" },
 	page,
 	pageSize,
 }: FeatureTablePagesProps<Order, OrderFilterType>): Promise<FeatureTablePagesResponse<Order>> {
@@ -16,8 +16,8 @@ export async function getOrdersPage({
 	let query = supabase.from("orders").select("*", { count: "exact" });
 
 	if (filterBy) {
-		if (filterBy.customer_name) {
-			query = query.ilike("customer_name", `%${filterBy.customer_name}%`);
+		if (filterBy.search) {
+			query = query.ilike("customer_name", `%${filterBy.search}%`);
 		}
 	}
 

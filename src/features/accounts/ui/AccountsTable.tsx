@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import { MdAccessTime } from "react-icons/md";
+import { useDebounce } from "@/hooks/use-debounce";
 
 // Columns that appears in the table
 const accCols = [
@@ -41,38 +42,46 @@ const accountSortOptions = [
 ] satisfies FeatureTableSortOption<UserProfile>[];
 
 const AccountsTable = () => {
-	const queryClient = useQueryClient();
+	// Simple states for the table
+	const [currPage, setCurrPage] = useState<number>(1);
+	const [currAccId, setCurrAccId] = useState<UserProfile["id"] | null>(null);
 
-	// States and hooks for the table
-	const [currPage, setcurrPage] = useState<number>(1);
-	const [search, setSearch] = useState<string>("");
+	// Search states and debouncer
+	const [searchInput, setSearchInput] = useState<string>("");
+	const debouncedSearch = useDebounce({value: searchInput, delay: 300, onDebounce: () => setCurrPage(1)})
+
+	// Filters and sorts
 	const [filters, setFilters] = useState<UserProfileFilterType>({ roles: [], search: "" });
 	const [sortBy, setsortBy] = useState<FeatureTableSortType<UserProfile>>({
 		column: "created_at",
 		isAscending: false,
 	});
+
+	// Handlers
+	const handleFiltersChange = (updates: UserProfileFilterType) => {
+		setFilters(updates);
+		setCurrPage(1);
+	};
+
+	const handleSearchChange = (value: string) => {
+		setSearchInput(value);
+	}
+
+	const handleSortChange = (updates: FeatureTableSortType<UserProfile>) => {
+		setsortBy(updates);
+		setCurrPage(1);
+	};
+
+	// Queries
+	const queryClient = useQueryClient();
 	const { isError, isPending, profiles, totalPages, isPlaceholderData, isFetching } =
 		useGetProfilesPages({
 			page: currPage,
 			pageSize: 10,
 			sortBy,
-			filterBy: filters,
+			filterBy: {...filters, search: debouncedSearch},
 		});
 	const { roles } = useGetRoles();
-
-	// States for the view modal
-	const [currAccId, setCurrAccId] = useState<UserProfile["id"] | null>(null);
-
-	// Handler functions for the table
-	const handleFiltersChange = (updates: UserProfileFilterType) => {
-		setFilters(updates);
-		setcurrPage(1);
-	};
-
-	const handleSortChange = (updates: FeatureTableSortType<UserProfile>) => {
-		setsortBy(updates);
-		setcurrPage(1);
-	};
 
 	if (isError) return <div>Error loading accounts</div>;
 
@@ -85,12 +94,8 @@ const AccountsTable = () => {
 					<FeatureTable.Actions>
 						{/* Search button */}
 						<FeatureTable.Search
-							value={search}
-							onChange={(value) => {
-								setSearch(value);
-								setFilters((currentFilters) => ({ ...currentFilters, search: value }));
-								setcurrPage(1);
-							}}
+							value={searchInput}
+							onChange={handleSearchChange}
 						></FeatureTable.Search>
 
 						{/* Filter button */}
@@ -132,7 +137,7 @@ const AccountsTable = () => {
 				<FeatureTablePagination
 					totalPages={totalPages}
 					currentPage={currPage}
-					onPageChange={setcurrPage}
+					onPageChange={setCurrPage}
 				></FeatureTablePagination>
 			</FeatureTable>
 
@@ -157,11 +162,7 @@ interface AccountsTableFilterProps {
 	handleFiltersChange: (updates: UserProfileFilterType) => void;
 }
 
-const AccountsTableFilter = ({
-	filters,
-	handleFiltersChange,
-	roles,
-}: AccountsTableFilterProps) => {
+const AccountsTableFilter = ({ filters, handleFiltersChange, roles }: AccountsTableFilterProps) => {
 	return (
 		<FeatureTable.Filter triggerText="Filter">
 			<DropdownMenuSub>
