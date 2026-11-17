@@ -2,11 +2,14 @@ import { supabase } from "@/lib/supabase";
 import type { Order, OrderFilterType } from "../types/types";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { calcTotalPages, getPageRange } from "@/lib/utils";
-import type { FeatureTablePagesProps, FeatureTablePagesResponse } from "@/components/ui/feature-tables/types";
+import type {
+	FeatureTablePagesProps,
+	FeatureTablePagesResponse,
+} from "@/components/ui/feature-tables/types";
 
 export async function getOrdersPage({
 	sortBy = { column: "created_at", isAscending: false },
-	filterBy = { search: "" },
+	filterBy = { search: "", status: null },
 	page,
 	pageSize,
 }: FeatureTablePagesProps<Order, OrderFilterType>): Promise<FeatureTablePagesResponse<Order>> {
@@ -18,6 +21,9 @@ export async function getOrdersPage({
 	if (filterBy) {
 		if (filterBy.search) {
 			query = query.ilike("customer_name", `%${filterBy.search}%`);
+		}
+		if (filterBy.status) {
+			query = query.eq("status", filterBy.status);
 		}
 	}
 
@@ -32,7 +38,6 @@ export async function getOrdersPage({
 	if (error) {
 		throw new Error("Error when fetching orders");
 	}
-
 
 	return { data, totalPages, count, error };
 }

@@ -4,7 +4,12 @@ import FeatureTable, {
 	type FeatureTableSortOption,
 } from "@/components/ui/feature-tables/feature-table";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
-import { type Order, type OrderSortType } from "../types/types";
+import {
+	type Order,
+	type OrderFilterType,
+	type OrderSortType,
+	type OrderStatus,
+} from "../types/types";
 import { Button } from "@/components/ui/button";
 import ViewOrderDialog from "./ViewHandleOrderDialog";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,6 +20,12 @@ import { BsAlphabetUppercase } from "react-icons/bs";
 import type { FeatureTableSortType } from "@/components/ui/feature-tables/types";
 import { formatCurrency } from "@/lib/utils";
 import { useDebounce } from "@/hooks/use-debounce";
+import {
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
+import { useOrderStatuses } from "../hooks/useOrderStatuses";
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name" },
@@ -56,9 +67,15 @@ const OrdersTable = () => {
 	// Simple table states
 	const [currOrderId, setCurrOrderId] = useState<Order["id"]>("");
 	const [currPage, setCurrPage] = useState<number>(1);
+
+	// Sort and filter states
 	const [sortBy, setSortBy] = useState<FeatureTableSortType<Order>>({
 		column: "created_at",
 		isAscending: false,
+	});
+
+	const [filters, setFilters] = useState<OrderFilterType>({
+		status: null,
 	});
 
 	// Search states and debouncer
@@ -81,15 +98,23 @@ const OrdersTable = () => {
 		setCurrPage(1);
 	};
 
+	const handleFilterBy = (newFilters: OrderFilterType) => {
+		if (!filters) return;
+
+		setFilters((prev) => ({ ...prev, ...newFilters }));
+		setCurrPage(1);
+	};
+
 	// Queries
 	const queryClient = useQueryClient();
 	const { orders, totalPages, isPlaceholderData, isFetching, isPending, isError, error } =
 		useGetOrdersPage({
 			page: currPage,
 			pageSize: 10,
-			filterBy: { search: debouncedSearch },
+			filterBy: { search: debouncedSearch, ...filters },
 			sortBy,
 		});
+	const { orderStatuses } = useOrderStatuses();
 
 	if (isError) {
 		return <div>{error.message}</div>;
@@ -108,6 +133,33 @@ const OrdersTable = () => {
 							value={searchInput}
 							onChange={handleSearchChange}
 						/>
+
+						<FeatureTable.Filter>
+							{orderStatuses && orderStatuses.length > 0 && (
+								<DropdownMenuGroup>
+									<DropdownMenuLabel>Statuses</DropdownMenuLabel>
+									<DropdownMenuItem
+										onClick={() => {
+											handleFilterBy({ status: null });
+										}}
+									>
+										All
+									</DropdownMenuItem>
+									{orderStatuses?.map((o: OrderStatus) => {
+										return (
+											<DropdownMenuItem
+												key={o.id}
+												onClick={() => {
+													handleFilterBy({ status: o.id });
+												}}
+											>
+												{o.id}
+											</DropdownMenuItem>
+										);
+									})}
+								</DropdownMenuGroup>
+							)}
+						</FeatureTable.Filter>
 
 						{/* Sort dropdown */}
 						<FeatureTable.Sort

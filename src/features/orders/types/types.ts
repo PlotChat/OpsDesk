@@ -14,5 +14,6 @@ export type OrderStatus = {
 
 export type OrderSortType = {column: keyof Order, isAscending: boolean};
 export type OrderFilterType = {
-	search: string,
+	search?: string,
+	status?: OrderStatus["id"] | null,
 }
