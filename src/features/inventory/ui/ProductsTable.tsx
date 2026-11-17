@@ -57,7 +57,6 @@ export const ProductsTable = ({ className }: { className: string }) => {
 		categories: [],
 		maxPrice: Number.MAX_VALUE,
 		minPrice: 0,
-		search: "",
 	});
 
 	// Search states
