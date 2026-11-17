@@ -32,14 +32,14 @@ const accCols = [
 	{ key: "full_name", label: "Name" },
 	{ key: "role_name", label: "Role" },
 	{ key: "created_at", label: "Creation Date" },
-] satisfies DataTableColumn<UserProfile>[];
+] as const satisfies DataTableColumn<UserProfile>[];
 
 const accountSortOptions = [
 	{ value: "email", label: "Email", icon: BsAlphabetUppercase },
 	{ value: "full_name", label: "Name", icon: BsAlphabetUppercase },
 	{ value: "role_name", label: "Role", icon: BsAlphabetUppercase },
 	{ value: "created_at", label: "Creation Date", icon: MdAccessTime },
-] satisfies FeatureTableSortOption<UserProfile>[];
+] as const satisfies FeatureTableSortOption<UserProfile>[];
 
 const AccountsTable = () => {
 	// Simple states for the table

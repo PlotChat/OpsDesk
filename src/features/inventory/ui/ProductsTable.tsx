@@ -31,14 +31,14 @@ const productColumns = [
 	{ key: "name", label: "Name", width: "xl", truncate: true },
 	{ key: "price", label: "Price", renderElements: (row) => formatCurrency(row.price) },
 	{ key: "created_at", label: "Created at" },
-] satisfies DataTableColumn<Product>[];
+] as const satisfies DataTableColumn<Product>[];
 
 // Options directly map to real database column names
 const sortOptions = [
 	{ value: "name", label: "Alphabet", icon: BsAlphabetUppercase },
 	{ value: "price", label: "Price", icon: IoPricetagsOutline },
 	{ value: "created_at", label: "Date", icon: MdAccessTime },
-] satisfies FeatureTableSortOption<Product>[];
+] as const satisfies FeatureTableSortOption<Product>[];
 
 export const ProductsTable = ({ className }: { className: string }) => {
 	// Simple page states

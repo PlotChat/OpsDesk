@@ -55,13 +55,13 @@ const orderColumns = [
 			return <Badge variant={variant}>{row.status}</Badge>;
 		},
 	},
-] satisfies DataTableColumn<Order>[];
+] as const satisfies DataTableColumn<Order>[];
 
 const orderSortOptions = [
 	{ value: "customer_name", label: "Alphabet", icon: BsAlphabetUppercase },
 	{ value: "total_amount", label: "Total Amount", icon: IoPricetagsOutline },
 	{ value: "created_at", label: "Date", icon: MdAccessTime },
-] satisfies FeatureTableSortOption<Order>[];
+] as const satisfies FeatureTableSortOption<Order>[];
 
 const OrdersTable = () => {
 	// Simple table states
