@@ -16,7 +16,9 @@ export async function getOrdersPage({
 	const { from, to } = getPageRange(page, pageSize);
 
 	/* Declare base query */
-	let query = supabase.from("orders").select("*", { count: "exact" });
+	let query = supabase
+		.from("orders")
+		.select("*", { count: "exact" });
 
 	if (filterBy) {
 		if (filterBy.search) {
