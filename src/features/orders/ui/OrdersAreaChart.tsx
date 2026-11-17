@@ -13,7 +13,7 @@ const OrdersAreaChart = () => {
 				data={orderStats}
 				dateKey="date"
 				isLoading={isPending}
-				series={[{ key: "revenue", label: "Revenue", color: "var(--chart-1)" }]}
+				series={[{ key: "revenue", label: "Revenue", color: "var(--color-green-300)" }]}
 				valueFormatter={(val) =>
 					`$${val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 				}
@@ -26,7 +26,7 @@ const OrdersAreaChart = () => {
 				data={orderStats}
 				dateKey="date"
 				isLoading={isPending}
-				series={[{ key: "orders", label: "Orders", color: "var(--chart-2)" }]}
+				series={[{ key: "orders", label: "Orders", color: "var(--color-violet-500)" }]}
 			/>
 		</div>
 	);
