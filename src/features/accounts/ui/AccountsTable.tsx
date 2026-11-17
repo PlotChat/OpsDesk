@@ -4,7 +4,7 @@ import {
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/atoms/dropdown-menu";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
 import FeatureTable, {
 	type FeatureTableSortOption,
@@ -20,7 +20,7 @@ import type {
 import { useState } from "react";
 import { useGetRoles } from "../hooks/useRoles";
 import ViewEditAccountDialog from "./ViewEditAccountDialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import { useQueryClient } from "@tanstack/react-query";
 import { BsAlphabetUppercase } from "react-icons/bs";
 import { MdAccessTime } from "react-icons/md";

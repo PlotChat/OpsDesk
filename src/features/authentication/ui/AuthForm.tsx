@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/atoms/button";
+import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/atoms/field";
+import { Input } from "@/components/ui/atoms/input";
 import { useSignIn, useSignUp } from "../hooks/useAuth";
 import { useState } from "react";
 import type { AuthProps } from "../api/authenticate";

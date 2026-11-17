@@ -2,7 +2,7 @@ import FeatureTable, { FeatureTableTitle } from "@/components/ui/feature-tables/
 import { useGetTopSellingProducts } from "../hooks/useProducts";
 import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
 import type { TopSellingProduct } from "../types/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
 import { useState } from "react";
 import { cn } from "cn";

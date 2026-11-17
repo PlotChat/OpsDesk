@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/atoms/card";
 import {
 	ChartContainer,
 	ChartLegend,
@@ -8,15 +8,15 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 	type ChartConfig,
-} from "@/components/ui/chart";
+} from "@/components/ui/atoms/chart";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/ui/atoms/select";
+import { Skeleton } from "@/components/ui/atoms/skeleton";
 
 export interface AreaSeriesConfig<T> {
 	key: Extract<keyof T, string>;

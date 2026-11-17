@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import { useSignOut } from "@/features/authentication/hooks/useAuth";
 import useAuthContext from "@/features/authentication/hooks/useAuthContext";
 import type { UserProfile } from "@/features/authentication/types/ProfileType";

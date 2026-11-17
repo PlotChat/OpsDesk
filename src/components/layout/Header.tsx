@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router";
 import icon from "@/assets/logo.svg";
 import fallbackPfp from "@/assets/fallbackPfp.png";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/atoms/avatar";
 import useAuthContext from "@/features/authentication/hooks/useAuthContext";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import { useSignOut } from "@/features/authentication/hooks/useAuth";
 
 const Header = () => {

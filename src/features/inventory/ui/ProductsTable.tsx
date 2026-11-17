@@ -2,20 +2,20 @@ import { type DataTableColumn } from "@/components/ui/feature-tables/data-table"
 import FeatureTable, {
 	type FeatureTableSortOption,
 } from "@/components/ui/feature-tables/feature-table";
-import { toast } from "@/components/ui/toast";
+import { toast } from "@/components/ui/atoms/toast";
 import type { Product, ProductFilterType } from "../types/types";
 import { useDeleteProduct, useGetProductsPage } from "../hooks/useProducts";
 import { useState } from "react";
 import ViewEditProductItemDialog from "./ViewEditProductItemDialog";
 import CreateProductDialog from "./CreateProductDialog";
 import { useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import {
 	DropdownMenuCheckboxItem,
 	DropdownMenuSub,
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/atoms/dropdown-menu";
 import { useGetCategories } from "../hooks/useCategories";
 import { MdAccessTime, MdOutlineCategory } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";

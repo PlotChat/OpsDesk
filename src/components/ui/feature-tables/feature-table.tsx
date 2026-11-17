@@ -5,8 +5,8 @@ import {
 	FeatureTablePagination,
 	type FeatureTablePaginationProps,
 } from "./feature-table-pagination";
-import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Button } from "@/components/ui/atoms/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/atoms/input-group";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -16,8 +16,8 @@ import {
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import ReloadButton from "@/components/ui/reload-button";
+} from "@/components/ui/atoms/dropdown-menu";
+import ReloadButton from "@/components/ui/atoms/reload-button";
 import { IoSearch, IoFilter } from "react-icons/io5";
 import { IoMdAdd } from "react-icons/io";
 import { BiSortAlt2 } from "react-icons/bi";

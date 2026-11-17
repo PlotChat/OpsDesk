@@ -10,10 +10,10 @@ import {
 	type OrderSortType,
 	type OrderStatus,
 } from "../types/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import ViewOrderDialog from "./ViewHandleOrderDialog";
 import { useQueryClient } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/atoms/badge";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { MdAccessTime } from "react-icons/md";
 import { BsAlphabetUppercase } from "react-icons/bs";
@@ -24,7 +24,7 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/atoms/dropdown-menu";
 import { useOrderStatuses } from "../hooks/useOrderStatuses";
 
 const orderColumns = [

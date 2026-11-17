@@ -4,9 +4,9 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
+} from "@/components/ui/atoms/dialog";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/atoms/field";
+import { Button } from "@/components/ui/atoms/button";
 import { Input } from "@base-ui/react";
 import { useCreateProduct } from "../hooks/useProducts";
 import type { Category } from "../types/types";

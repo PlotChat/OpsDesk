@@ -6,7 +6,7 @@ import {
 	PaginationLink,
 	PaginationNext,
 	PaginationPrevious,
-} from "@/components/ui/pagination";
+} from "@/components/ui/atoms/pagination";
 import { generatePagination } from "@/utils/generatePagination";
 
 export interface FeatureTablePaginationProps {

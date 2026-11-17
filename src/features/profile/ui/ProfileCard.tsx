@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import {
 	Card,
 	CardContent,
@@ -6,9 +6,9 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Field, FieldGroup, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/atoms/card";
+import { Field, FieldGroup, FieldSet } from "@/components/ui/atoms/field";
+import { Input } from "@/components/ui/atoms/input";
 import useAuthContext from "@/features/authentication/hooks/useAuthContext";
 import { useUpdateProfile } from "@/features/authentication/hooks/useProfiles";
 import type { UserProfile } from "@/features/authentication/types/ProfileType";

@@ -1,13 +1,13 @@
 import { useState, type SubmitEvent } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/atoms/dialog";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/atoms/field";
+import { Button } from "@/components/ui/atoms/button";
+import { Input } from "@/components/ui/atoms/input";
 import { useEditProduct, useGetProduct } from "../hooks/useProducts";
 import type { Category, Product } from "../types/types";
 import { CategorySelector } from "./CategorySelector";
 import { cn } from "cn";
-import { CopyButton } from "@/components/ui/copy-button";
+import { CopyButton } from "@/components/ui/atoms/copy-button";
 
 const inputTextStyles =
 	"p-2 bg-secondary/30 border rounded-md text-sm min-h-[38px] flex items-center";

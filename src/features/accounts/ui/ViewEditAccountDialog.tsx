@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
-import { CopyButton } from "@/components/ui/copy-button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/atoms/button";
+import { CopyButton } from "@/components/ui/atoms/copy-button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/atoms/dialog";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/atoms/field";
+import { Input } from "@/components/ui/atoms/input";
 import {
 	Select,
 	SelectContent,
@@ -10,7 +10,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/atoms/select";
 import {
 	useGetProfileByUserId,
 	useUpdateProfile,

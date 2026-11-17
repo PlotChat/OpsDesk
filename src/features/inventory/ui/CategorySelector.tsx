@@ -1,5 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Badge } from "@/components/ui/atoms/badge";
+import { Field, FieldLabel } from "@/components/ui/atoms/field";
 import {
 	Select,
 	SelectContent,
@@ -7,7 +7,7 @@ import {
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/atoms/select";
 import { RxCross2 } from "react-icons/rx";
 import type { Category } from "../types/types";
 import { useGetCategories } from "../hooks/useCategories";

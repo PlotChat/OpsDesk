@@ -7,8 +7,8 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 	type ChartConfig,
-} from "@/components/ui/chart";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/ui/atoms/chart";
+import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { cn } from "cn";
 
 const DEFAULT_COLORS = [

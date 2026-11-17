@@ -1,8 +1,8 @@
-import { CopyButton } from "@/components/ui/copy-button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CopyButton } from "@/components/ui/atoms/copy-button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/atoms/dialog";
 import type { Order, OrderStatus } from "../types/types";
 import { useGetOrder } from "../hooks/useOrders";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import { cn } from "cn";
 import {
 	Select,
@@ -12,7 +12,7 @@ import {
 	SelectLabel,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/atoms/select";
 
 import { useState } from "react";
 import { useOrderStatuses, useUpdateOrderStatus } from "../hooks/useOrderStatuses";

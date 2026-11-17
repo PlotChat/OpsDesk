@@ -1,4 +1,4 @@
-import FloatingCornerBackButton from "@/components/ui/floating-corner-back-button";
+import FloatingCornerBackButton from "@/components/ui/atoms/floating-corner-back-button";
 import { Outlet } from "react-router";
 
 const AuthPage = () => {

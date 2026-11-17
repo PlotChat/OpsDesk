@@ -1,4 +1,4 @@
-import FloatingCornerBackButton from "@/components/ui/floating-corner-back-button"
+import FloatingCornerBackButton from "@/components/ui/atoms/floating-corner-back-button"
 import ProfileCard from "@/features/profile/ui/ProfileCard"
 
 const ProfilePage = () => {

@@ -12,11 +12,11 @@ import {
 	SidebarMenuItem,
 	SidebarTrigger,
 	useSidebar,
-} from "@/components/ui/sidebar";
-import { Button } from "../ui/button";
+} from "@/components/ui/atoms/sidebar";
+import { Button } from "../ui/atoms/button";
 import { cn } from "cn";
 import logo from "@/assets/logo.svg";
-import { Separator } from "../ui/separator";
+import { Separator } from "../ui/atoms/separator";
 import { MdManageAccounts } from "react-icons/md";
 import useAuthContext from "@/features/authentication/hooks/useAuthContext";
 

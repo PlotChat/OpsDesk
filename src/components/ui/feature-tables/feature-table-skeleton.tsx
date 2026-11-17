@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/atoms/skeleton";
 import { TableBody, TableCell, TableRow } from "./table";
 
 interface FeatureTableSkeletonProps {

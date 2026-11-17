@@ -1,7 +1,7 @@
 import { FeaturePieChart } from "@/components/ui/chart/feature-pie-chart";
 import { useGetRevenueByCategory } from "../hooks/useCategories";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/atoms/button";
 import { cn } from "cn";
 
 const daysBackOptions = [
