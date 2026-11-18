@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import { DataTable, type DataTableProps } from "./data-table";
 import { cn } from "cn";
 import {
@@ -259,12 +259,11 @@ function FeatureTableSort<T>({
 	);
 }
 
-export interface FeatureTableAddButtonProps {
+export interface FeatureTableAddButtonProps extends ComponentPropsWithoutRef<"button"> {
 	onClick?: () => void;
 	label?: string;
 	icon?: ReactNode;
 	className?: string;
-	buttonProps?: React.ComponentProps<typeof Button>;
 }
 
 function FeatureTableAddButton({
@@ -272,14 +271,14 @@ function FeatureTableAddButton({
 	label,
 	icon = <IoMdAdd />,
 	className,
-	buttonProps,
+	...props
 }: FeatureTableAddButtonProps) {
 	return (
 		<Button
 			variant="outline"
 			onClick={onClick}
 			className={cn(label ? "flex gap-1.5" : "", className)}
-			{...buttonProps}
+			{...props}
 		>
 			{icon}
 			{label && <span>{label}</span>}
