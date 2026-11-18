@@ -49,6 +49,7 @@ const ProductsTierTable = ({ className }: ProductsTierTableProps) => {
 					<div className="flex gap-2">
 						{daysBackOptions.map((o) => (
 							<Button
+								key={o.value}
 								variant={daysBack === o.value ? "default" : "outline"}
 								onClick={() => setDaysBack(o.value)}
 							>
