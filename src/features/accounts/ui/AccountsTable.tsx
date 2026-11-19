@@ -48,7 +48,7 @@ const AccountsTable = () => {
 
 	// Search states and debouncer
 	const [searchInput, setSearchInput] = useState<string>("");
-	const debouncedSearch = useDebounce({value: searchInput, delay: 300, onDebounce: () => setCurrPage(1)})
+	const debouncedSearch = useDebounce({value: searchInput, delay: 300, onDebounceEnd: () => setCurrPage(1)})
 
 	// Filters and sorts
 	const [filters, setFilters] = useState<UserProfileFilterType>({ roles: [], search: "" });
