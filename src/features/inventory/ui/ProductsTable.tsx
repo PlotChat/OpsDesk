@@ -27,7 +27,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 
 // Table's columns
 const productColumns = [
-	{ key: "sku", label: "SKU", width: "md", truncate: true },
+	{ key: "sku", label: "SKU", width: "md", truncate: true, tooltip: (row) => `${row.name}` },
 	{ key: "name", label: "Name", width: "xl", truncate: true },
 	{ key: "price", label: "Price", renderElements: (row) => formatCurrency(row.price) },
 	{ key: "created_at", label: "Created at" },

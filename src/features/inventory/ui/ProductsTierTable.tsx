@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 
 const columns: DataTableColumn<TopSellingProduct>[] = [
 	{ key: "index", label: "#" },
-	{ key: "name", label: "Name" },
+	{ key: "name", label: "Name", tooltip: (row) => `${row.name}` },
 	{
 		key: "total_revenue",
 		label: "Revenue",

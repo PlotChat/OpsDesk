@@ -28,7 +28,7 @@ import {
 import { useOrderStatuses } from "../hooks/useOrderStatuses";
 
 const orderColumns = [
-	{ key: "customer_name", label: "Customer Name" },
+	{ key: "customer_name", label: "Customer Name", tooltip: (row) => `${row.customer_name}` },
 	{
 		key: "total_amount",
 		label: "Total",

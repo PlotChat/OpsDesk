@@ -9,7 +9,8 @@ export interface DataTableColumn<T> {
 	label: string;
 	align?: "left" | "center" | "right";
 	width?: "xs" | "sm" | "md" | "lg" | "xl";
-	getColumnStyles?: (row: T) => string;
+	tooltip?: (row: T) => string,
+	getColumnStyles?: (col: T) => string;
 	renderElements?: (row: T) => React.ReactNode;
 }
 
@@ -85,6 +86,7 @@ export function DataTable<T>({
 											<TableCell
 												key={String(col.key)}
 												className={cn(getCellStyles(col, false), col.getColumnStyles?.(row))}
+												title={col.tooltip && col.tooltip(row)}
 											>
 												{col.renderElements ? col.renderElements(row) : String(row[col.key])}
 											</TableCell>

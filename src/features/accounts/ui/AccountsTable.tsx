@@ -28,8 +28,8 @@ import { useDebounce } from "@/hooks/use-debounce";
 
 // Columns that appears in the table
 const accCols = [
-	{ key: "email", label: "Email" },
-	{ key: "full_name", label: "Name" },
+	{ key: "email", label: "Email", tooltip: (row) => `${row.email}` },
+	{ key: "full_name", label: "Name", tooltip: (row) => `${row.full_name}` },
 	{ key: "role_name", label: "Role" },
 	{ key: "created_at", label: "Creation Date" },
 ] as const satisfies DataTableColumn<UserProfile>[];
