@@ -83,7 +83,7 @@ const OrdersTable = () => {
 	const debouncedSearch = useDebounce({
 		value: searchInput,
 		delay: 300,
-		onDebounce: () => setCurrPage(1),
+		onDebounceEnd: () => setCurrPage(1),
 	});
 
 	// Handlers

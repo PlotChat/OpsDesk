@@ -64,7 +64,7 @@ export const ProductsTable = ({ className }: { className: string }) => {
 	const debouncedSearch = useDebounce({
 		value: searchInput,
 		delay: 300,
-		onDebounce: () => setCurrentPage(1),
+		onDebounceEnd: () => setCurrentPage(1),
 	});
 
 	// Handlers

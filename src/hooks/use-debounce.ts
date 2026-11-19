@@ -1,29 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 
 export function useDebounce<T>({
-    value,
-    delay = 300,
-    onDebounce,
+	value,
+	delay = 300,
+	onDebounceStart,
+	onDebounceEnd,
 }: {
-    value: T;
-    delay?: number;
-    onDebounce?: () => void;
+	value: T;
+	delay?: number;
+	onDebounceStart?: () => void;
+	onDebounceEnd?: () => void;
 }): T {
-    const [debouncedValue, setDebouncedValue] = useState<T>(value);
-    const onDebounceRef = useRef(onDebounce);
+	const [debouncedValue, setDebouncedValue] = useState<T>(value);
+	const onDebounceStartRef = useRef(onDebounceStart);
+	const onDebounceEndRef = useRef(onDebounceEnd);
 
-    useEffect(() => {
-        onDebounceRef.current = onDebounce;
-    }, [onDebounce]);
+	useEffect(() => {
+		onDebounceStartRef.current = onDebounceStart;
+	}, [onDebounceStart]);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setDebouncedValue(value);
-            onDebounceRef.current?.();
-        }, delay);
+	useEffect(() => {
+		onDebounceEndRef.current = onDebounceEnd;
+	}, [onDebounceEnd]);
 
-        return () => clearTimeout(timer);
-    }, [value, delay]);
+	useEffect(() => {
+        onDebounceEndRef.current?.();
 
-    return debouncedValue;
+		const timer = setTimeout(() => {
+			setDebouncedValue(value);
+			onDebounceEndRef.current?.();
+		}, delay);
+
+		return () => clearTimeout(timer);
+	}, [value, delay]);
+
+	return debouncedValue;
 }
