@@ -155,7 +155,7 @@ export function FeatureAreaChart<T extends Record<string, unknown>>({
 											})
 										}
 										formatter={(value, name) => [
-											valueFormatter(Number(value)),
+											valueFormatter(Number(value)), " ",
 											chartConfig[String(name)]?.label ?? name,
 										]}
 										indicator="dot"
