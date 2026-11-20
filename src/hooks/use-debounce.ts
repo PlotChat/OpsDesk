@@ -24,7 +24,7 @@ export function useDebounce<T>({
 	}, [onDebounceEnd]);
 
 	useEffect(() => {
-        onDebounceEndRef.current?.();
+        onDebounceStartRef.current?.();
 
 		const timer = setTimeout(() => {
 			setDebouncedValue(value);
