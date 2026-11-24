@@ -41,9 +41,7 @@ export async function getProfilesPages({
 > {
 	const { from, to } = getPageRange(page, pageSize);
 
-	let query = supabase
-		.from("profiles")
-		.select("*, roles(id, name)", { count: "exact" });
+	let query = supabase.from("profiles").select("*, roles(id, name)", { count: "exact" });
 
 	const searchTerm = filterBy.search.trim();
 	if (searchTerm) {
@@ -63,9 +61,7 @@ export async function getProfilesPages({
 		query = query.order(sortBy.column, { ascending: sortBy.isAscending });
 	}
 
-	const { data, error, count } = await query
-		.order("id", { ascending: true })
-		.range(from, to);
+	const { data, error, count } = await query.order("id", { ascending: true }).range(from, to);
 
 	if (error) {
 		throw new Error("Error fetching accounts pages");
@@ -87,4 +83,19 @@ export async function getProfilesPages({
 	const totalPages = calcTotalPages(count, pageSize);
 
 	return { data: formattedData, count, totalPages, error };
+}
+
+export async function getProfileByEmail({ email }: { email: string }) {
+	const { data, error } = await supabase
+		.from("profiles")
+		.select("*")
+		.eq("email", email)
+		.limit(1)
+		.maybeSingle();
+
+	if (error) throw new Error("Error getting profile by email");
+
+	if (!data) throw new Error("User not found by provided email");
+
+	return data as UserProfile;
 }

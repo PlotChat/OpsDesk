@@ -1,6 +1,6 @@
 import { CopyButton } from "@/components/ui/atoms/copy-button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/atoms/dialog";
-import type { Order, OrderItem, OrderStatus } from "../types/types";
+import type { Order, OrderStatus } from "../types/types";
 import { useGetOrder } from "../hooks/useOrders";
 import { Button } from "@/components/ui/atoms/button";
 import { cn } from "cn";
@@ -17,23 +17,10 @@ import {
 import { useState } from "react";
 import { useOrderStatuses, useUpdateOrderStatus } from "../hooks/useOrderStatuses";
 import { FaSave } from "react-icons/fa";
-import { useGetOrderItemsByOrderId } from "../hooks/useOrderItems";
 import { Separator } from "@/components/ui/atoms/separator";
-import FeatureTable from "@/components/ui/feature-tables/feature-table";
-import type { DataTableColumn } from "@/components/ui/feature-tables/data-table";
+import { OrderItemsTable } from "./OrderItemsTable";
 
 const labelStyles = "p-3 bg-muted/70 rounded-lg";
-const orderItemColumns = [
-	{ key: "name", label: "Name" },
-	{ key: "quantity", label: "Qty" },
-	{
-		key: "unit_price",
-		label: "Unit Price",
-		renderElements(row) {
-			return `$` + `${row.unit_price}`;
-		},
-	},
-] as const satisfies DataTableColumn<OrderItem>[];
 
 const ViewHandleOrderDialog = ({
 	open,
@@ -45,7 +32,6 @@ const ViewHandleOrderDialog = ({
 	onOpenChange: (isOpen: boolean) => void;
 }) => {
 	const { order, isPending } = useGetOrder({ id: orderId });
-	const { orderItems, isPlaceholderData, totalPrice } = useGetOrderItemsByOrderId({ orderId });
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -82,21 +68,14 @@ const ViewHandleOrderDialog = ({
 							<Separator className={"my-3"}></Separator>
 
 							<div className="flex flex-col justify-between gap-2">
-								<div className="overflow-scroll h-59">
-									<FeatureTable>
-										<FeatureTable.Content
-											className="my-1"
-											data={orderItems}
-											rowKey={"product_id"}
-											columns={orderItemColumns}
-											isLoading={isPlaceholderData}
-										></FeatureTable.Content>
-									</FeatureTable>
-								</div>
-
-								<div className="me-1 text-end">
-									<h3>Total Price: ${totalPrice}</h3>
-								</div>
+								{!isPending && order && (
+									<OrderItemsTable
+										orderId={order.id}
+										containerClassName={"overflow-scroll h-59 rounded-2xl mb-2"}
+										includeTotalPrice={true}
+										loadingRowCount={5}
+									></OrderItemsTable>
+								)}
 							</div>
 						</div>
 
@@ -185,15 +164,15 @@ const ViewHandleOrderStatusSelect = ({ order }: { order: Order }) => {
 const ViewHandleOrderDialogSkeleton = () => {
 	return (
 		<>
-			<div className={cn(labelStyles, "h-18 animate-pulse")}>
+			<div className={cn(labelStyles, "h-17 animate-pulse")}>
 				<div className="flex justify-between"></div>
 			</div>
 
-			<div className={cn(labelStyles, "h-18 animate-pulse")}>
+			<div className={cn(labelStyles, "h-21 animate-pulse")}>
 				<div className="flex justify-between"></div>
 			</div>
 
-			<div className={cn(labelStyles, "h-84 animate-pulse")}>
+			<div className={cn(labelStyles, "h-89 animate-pulse")}>
 				<div className="flex justify-between"></div>
 			</div>
 

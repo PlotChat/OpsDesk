@@ -1,6 +1,7 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	getProduct,
+	getProductsBySku,
 	getProductsPage,
 	getTopSellingProducts,
 	type getTopSellingProductsProps,
@@ -100,10 +101,16 @@ export function useGetTopSellingProducts({ amount, daysBack }: getTopSellingProd
 	const query = useQuery({
 		queryKey: ["productsTopSelling", amount, daysBack],
 		queryFn: async () => {
-			await new Promise((resolve) => setTimeout(resolve, 500))
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			return getTopSellingProducts({ amount, daysBack });
 		},
 	});
 
 	return { topSellingProducts: query.data, ...query };
+}
+
+export function useGetProductBySku({ sku }: { sku: string }) {
+	const query = useQuery({ queryFn: () => getProductsBySku({ sku }), queryKey: ["product", sku] });
+
+	return query;
 }

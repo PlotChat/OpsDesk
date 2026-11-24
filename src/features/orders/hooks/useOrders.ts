@@ -5,8 +5,14 @@ import { deleteOrder } from "../api/deleteOrder.ts";
 import type { Order, OrderFilterType } from "../types/types.ts";
 import { formatTimeToDMY } from "@/lib/utils.ts";
 import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types.ts";
+import { createOrder, type CreateOrderPayload } from "../api/createOrder.ts";
 
-export function useGetOrdersPage({ page, pageSize, sortBy, filterBy }: FeatureTablePagesProps<Order, OrderFilterType>) {
+export function useGetOrdersPage({
+	page,
+	pageSize,
+	sortBy,
+	filterBy,
+}: FeatureTablePagesProps<Order, OrderFilterType>) {
 	const ordersQuery = useQuery({
 		queryKey: ["ordersPage", page, pageSize, sortBy, filterBy],
 		queryFn: async () => {
@@ -17,9 +23,10 @@ export function useGetOrdersPage({ page, pageSize, sortBy, filterBy }: FeatureTa
 		refetchOnWindowFocus: false,
 	});
 
-	const formattedData = ordersQuery.data?.data.map(
-		(o: Order) => ({...o, created_at: formatTimeToDMY(o.created_at)}),
-	);
+	const formattedData = ordersQuery.data?.data.map((o: Order) => ({
+		...o,
+		created_at: formatTimeToDMY(o.created_at),
+	}));
 
 	return {
 		orders: formattedData || [],
@@ -65,4 +72,21 @@ export function useOrderChartStats(daysBack = 365) {
 		queryFn: () => getOrderChartStats(daysBack),
 		staleTime: 1000 * 60 * 5, // Cache for 5 minutes
 	});
+}
+
+export function useCreateOrder() {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: async ({ customer_name, customer_id, status, orderItems }: CreateOrderPayload) => {
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			return createOrder({ customer_name, customer_id, status, orderItems });
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({queryKey: ["ordersPage"]})
+			queryClient.invalidateQueries({queryKey: ["order-chart-stats"]})
+		},
+	});
+
+	return { createOrder: mutation.mutate, ...mutation };
 }

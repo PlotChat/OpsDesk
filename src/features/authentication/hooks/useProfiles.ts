@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProfileByUserId, getProfilesPages } from "../api/getProfiles";
+import { getProfileByEmail, getProfileByUserId, getProfilesPages } from "../api/getProfiles";
 import type { UserProfile, UserProfileFilterType } from "../types/ProfileType";
 import type { FeatureTablePagesProps } from "@/components/ui/feature-tables/types";
 import { updateProfile, type updateProfileProps } from "../api/updateProfile";
@@ -55,5 +55,25 @@ export const useUpdateProfile = ({ id, updates }: updateProfileProps) => {
 		},
 	});
 
-	return {updateProfile: profileMutation.mutate, ...profileMutation};
+	return { updateProfile: profileMutation.mutate, ...profileMutation };
+};
+
+export const useGetProfileByEmail = ({ email, enabled }: { email: string; enabled: boolean }) => {
+	const query = useQuery({
+		queryFn: async () => {return await getProfileByEmail({ email })},
+		queryKey: ["profile", email],
+		enabled,
+		refetchOnWindowFocus: false,
+
+		// Only retry twice
+		retry: (failureCount, error) => {
+			if ("status" in error && error.status === 404) {
+				return false;
+			}
+
+			return failureCount < 2;
+		},
+	});
+
+	return { profile: query.data, ...query };
 };

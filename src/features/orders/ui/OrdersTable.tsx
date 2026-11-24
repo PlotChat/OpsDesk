@@ -26,6 +26,8 @@ import {
 	DropdownMenuLabel,
 } from "@/components/ui/atoms/dropdown-menu";
 import { useOrderStatuses } from "../hooks/useOrderStatuses";
+import CreateOrderDialog from "./CreateOrderDialog";
+import { getOrderItemsByOrderId } from "../api/getOrderItems";
 
 const orderColumns = [
 	{ key: "customer_name", label: "Customer Name", tooltip: (row) => `${row.customer_name}` },
@@ -66,6 +68,7 @@ const orderSortOptions = [
 const OrdersTable = () => {
 	// Simple table states
 	const [currOrderId, setCurrOrderId] = useState<Order["id"]>("");
+	const [isCreateModalOpen, setIsCreatModalOpen] = useState<boolean>(false);
 	const [currPage, setCurrPage] = useState<number>(1);
 
 	// Sort and filter states
@@ -173,6 +176,8 @@ const OrdersTable = () => {
 							isLoading={isFetching}
 							onClick={() => queryClient.invalidateQueries({ queryKey: ["ordersPage"] })}
 						/>
+
+						<FeatureTable.AddButton onClick={() => setIsCreatModalOpen(true)} />
 					</FeatureTable.Actions>
 				</FeatureTable.Header>
 
@@ -204,16 +209,36 @@ const OrdersTable = () => {
 					orderId={currOrderId}
 				/>
 			)}
+
+			{isCreateModalOpen && (
+				<CreateOrderDialog
+					open={isCreateModalOpen}
+					onOpenChange={() => setIsCreatModalOpen(false)}
+				></CreateOrderDialog>
+			)}
 		</div>
 	);
 };
 
 export default OrdersTable;
 
-const OrderTableActions = ({ onView }: { orderId: Order["id"]; onView: () => void }) => {
+const OrderTableActions = ({ orderId, onView }: { orderId: Order["id"]; onView: () => void }) => {
+	const queryClient = useQueryClient();
+
 	return (
 		<div className="flex gap-1 justify-center">
-			<Button variant="default" onClick={onView}>
+			<Button
+				variant="default"
+				onClick={onView}
+
+				// Prefetches the order items when hovered
+				onMouseEnter={() => {
+					queryClient.query({
+						queryFn: () => getOrderItemsByOrderId({ orderId }),
+						queryKey: ["order_items", orderId],
+					});
+				}}
+			>
 				View / Handle
 			</Button>
 		</div>

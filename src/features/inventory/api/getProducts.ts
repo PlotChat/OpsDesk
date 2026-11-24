@@ -119,13 +119,25 @@ export async function getProduct({ id }: { id: string }): Promise<Product> {
 	};
 }
 
+export async function getProductsBySku({ sku }: { sku: string }): Promise<Product> {
+	const { data, error } = await supabase.from("products").select("*").eq("sku", sku).maybeSingle();
+
+	if (error) throw new Error("Failed fetching this product");
+
+	if (!data) throw new Error("Product not found by provided SKU");
+
+	return data as Product;
+}
+
 export interface getTopSellingProductsProps {
 	amount: number;
 	daysBack: number;
 }
 
 export async function getTopSellingProducts({ amount, daysBack }: getTopSellingProductsProps) {
-	const { data, error } = await supabase.rpc("get_most_ordered_products", {days_back: daysBack}).range(0, amount - 1);
+	const { data, error } = await supabase
+		.rpc("get_most_ordered_products", { days_back: daysBack })
+		.range(0, amount - 1);
 
 	if (error) {
 		throw new Error("Error fetching top selling products");

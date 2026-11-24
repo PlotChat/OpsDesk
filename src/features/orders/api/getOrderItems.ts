@@ -9,10 +9,12 @@ export async function getOrderItemsByOrderId({ orderId }: { orderId: Order["id"]
 
 	const items = (data ?? []) as OrderItem[];
 
-	const totalPrice = items.reduce(
+	let totalPrice = items.reduce(
 		(sum, item) => sum + item.unit_price * item.quantity,
 		0,
 	);
+
+	totalPrice = Math.round(totalPrice * 100) / 100;
 
 	if (error) {
 		throw new Error("Error fetching order items by order id.");
