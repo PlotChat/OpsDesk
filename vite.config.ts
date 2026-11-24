@@ -8,6 +8,9 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true
   },
+  test: {
+    environment: 'jsdom',
+  },
   plugins: [
     react(),
     babel({ presets: [reactCompilerPreset()] }),
